@@ -1,0 +1,82 @@
+[
+    {
+        "product": "pen",
+        "store": "EcomSite2",
+        "old_price": 135.0,
+        "new_price": 126.0,
+        "type": "drop",
+        "timestamp": 1772459057.059406
+    },
+    {
+        "product": "pen",
+        "store": "EcomSite2",
+        "old_price": 135.0,
+        "new_price": 126.0,
+        "type": "drop",
+        "timestamp": 1772459057.845271
+    },
+    {
+        "product": "pen",
+        "store": "EcomSite1",
+        "old_price": 126.0,
+        "new_price": 595.0,
+        "type": "increase",
+        "timestamp": 1773577347.234221
+    },
+    {
+        "product": "pen",
+        "store": "EcomSite1",
+        "old_price": 126.0,
+        "new_price": 595.0,
+        "type": "increase",
+        "timestamp": 1773577350.08305
+    },
+    {
+        "product": "pen",
+        "store": "EcomSite1",
+        "old_price": 126.0,
+        "new_price": 595.0,
+        "type": "store_change",
+        "timestamp": 1773577351.82935
+    },
+    {
+        "product": "pen",
+        "store": "EcomSite1",
+        "old_price": 126.0,
+        "new_price": 595.0,
+        "type": "store_change",
+        "timestamp": 1773577354.050853
+    },
+    {
+        "product": "pen",
+        "store": "EcomSite2",
+        "old_price": 595.0,
+        "new_price": 126.0,
+        "type": "drop",
+        "timestamp": 1773577445.975029
+    },
+    {
+        "product": "pen",
+        "store": "EcomSite2",
+        "old_price": 595.0,
+        "new_price": 126.0,
+        "type": "drop",
+        "timestamp": 1773577448.4874299
+    },
+    {
+        "product": "pen",
+        "store": "EcomSite2",
+        "old_price": 595.0,
+        "new_price": 126.0,
+        "type": "store_change",
+        "timestamp": 1773577450.236622
+    },
+    {
+        "product": "pen",
+        "store": "EcomSite2",
+        "old_price": 595.0,
+        "new_price": 126.0,
+        "type": "store_change",
+        "timestamp": 1773577452.4541771
+    }
+]

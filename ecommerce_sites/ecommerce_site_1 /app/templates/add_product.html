@@ -1,0 +1,24 @@
+<h2>Add Product</h2>
+
+<form method="POST">
+    Name: <input type="text" name="name"><br><br>
+    Price: <input type="number" name="price"><br><br>
+    Discount: <input type="number" name="discount"><br><br>
+    <label>Rating (0–5):</label><br>
+    <input type="number" name="rating" step="0.1" min="0" max="5" required>
+    <br><br>
+    
+    <label>Availability:</label><br>
+
+    <input type="radio" name="availability" value="In Stock" checked>
+    <label>In Stock</label>
+
+    <input type="radio" name="availability" value="Out of Stock">
+    <label>Out of Stock</label>
+
+<br><br>
+
+    <button type="submit">Add Product</button>
+</form>
+
+<a href="/products">View Products</a>

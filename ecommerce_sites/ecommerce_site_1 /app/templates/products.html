@@ -1,0 +1,45 @@
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<h1>ECOMMERCE WEBSITE 1</h1>
+<div class="container">
+
+<h2>Products</h2>
+
+<a class="add-btn" href="/add">+ Add Product</a>
+
+<table>
+<tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>Price</th>
+    <th>Discount</th>
+    <th>Rating</th>
+    <th>Availability</th>
+    <th>Actions</th>
+</tr>
+
+{% for p in products %}
+<tr>
+    <td>{{ loop.index }}</td>
+    <td>{{ p[1] }}</td>
+    <td>₹{{ p[2] }}</td>
+    <td>{{ p[3] }}%</td>
+    <td>{{ p[5] }} ⭐</td>
+
+    <td>
+        {% if p[4] == "In Stock" %}
+            <span class="badge instock">In Stock</span>
+        {% else %}
+            <span class="badge outstock">Out of Stock</span>
+        {% endif %}
+    </td>
+
+    <td>
+        <a href="/edit/{{p[0]}}">✏️</a>
+        <a href="/delete/{{p[0]}}">🗑️</a>
+    </td>
+</tr>
+{% endfor %}
+
+</table>
+
+</div>
