@@ -4,7 +4,9 @@ from email.mime.multipart import MIMEMultipart
 
 # ---------------- GMAIL CONFIG ----------------
 EMAIL_ADDRESS = "madamanchiyashwanth0212@gmail.com"
-EMAIL_PASSWORD = "tdwgfbffnmxfagni"
+EMAIL_PASSWORD = "gbfmvajdxpoogywu"
+
+
 
 
 # ---------------- SEND EMAIL TO SINGLE USER ----------------
