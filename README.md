@@ -55,7 +55,9 @@ AI_Ecommerce_Offer_Recommendation_System
 ---
 
 # Project Screenshots
+## System Architecture
 
+![Architecture](images/Architecture%20diagram.png)
 ## All Products with Ranking
 ![Ranking](images/All%20products%20with%20ranking.png)
 
