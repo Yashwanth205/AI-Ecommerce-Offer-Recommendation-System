@@ -42,7 +42,7 @@ ALERTS_PATH = os.path.join(BASE_DIR, "../database/alerts.json")
 create_user_table()
 
 
-# --------------------------------------------------- 
+# ---------------------------------------------------
 # GET ALERTS
 # ---------------------------------------------------
 @app.route("/alerts")
@@ -277,12 +277,8 @@ def start_agent():
         run_agent()
 
 
-
 if __name__ == "__main__":
-
     agent_thread = threading.Thread(target=start_agent, daemon=True)
     agent_thread.start()
 
-    print("🚀 DealAI Server Running on http://127.0.0.1:5000")
-
-    app.run(port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5000)
