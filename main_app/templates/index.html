@@ -9,140 +9,264 @@
 
     <style>
 
-        body{
-            background:#f4f6fb;
-            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        }
+body{
+    background: linear-gradient(135deg,#eef2ff,#e0f2fe,#f8fafc);
+}
 
-        /* HERO TITLE */
-        .hero-title{
-            font-weight:700;
-            color:#1e293b;
-        }
+.hero-title{
+    font-weight:700;
+    color:#1e293b;
+}
 
-        /* BEST DEAL CARD */
-        .best-card{
-            background:linear-gradient(135deg,#fff3b0,#ffe082);
-            border-radius:18px;
-            padding:28px;
-            box-shadow:0 10px 25px rgba(0,0,0,0.15);
-        }
+/* SEARCH BAR */
+.input-group {
+    background: rgba(255,255,255,0.6);
+    backdrop-filter: blur(12px);
+    border-radius: 50px !important;
+    overflow: hidden;
+    transition: 0.3s;
+}
 
-        /* OTHER OFFER CARDS */
-        .offer-card{
-            border-radius:16px;
-            border:none;
-            background:white;
-            transition:0.25s;
-            box-shadow:0 6px 14px rgba(0,0,0,0.08);
-        }
+.input-group:hover {
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    transform: scale(1.03);
+}
 
-        .offer-card:hover{
-            transform:translateY(-8px);
-            box-shadow:0 16px 28px rgba(0,0,0,0.18);
-        }
+select.form-select {
+    background: transparent;
+    font-weight: 500;
+    border-right: 1px solid #ddd;
+}
 
-        .price{
-            font-size:22px;
-            font-weight:bold;
-            color:#198754;
-        }
+.form-control {
+    background: transparent;
+}
 
-        .old-price{
-            text-decoration:line-through;
-            color:gray;
-        }
+.btn-primary {
+    background: linear-gradient(135deg,#2563eb,#3b82f6);
+    border: none;
+    font-weight: 600;
+}
 
-        .store-badge{
-            font-size:13px;
-        }
+.btn-primary:hover {
+    transform: scale(1.08);
+}
+
+/* BEST DEAL */
+.best-card{
+    background:linear-gradient(135deg,#fff3b0,#ffe082);
+    border-radius:18px;
+    padding:28px;
+    box-shadow:0 12px 30px rgba(0,0,0,0.2);
+}
+
+/* OFFER CARDS */
+.offer-card{
+    border-radius:16px;
+    border:none;
+    background:white;
+    transition:0.3s;
+    box-shadow:0 8px 18px rgba(0,0,0,0.1);
+}
+
+.offer-card:hover{
+    transform:translateY(-10px) scale(1.02);
+    box-shadow:0 18px 35px rgba(0,0,0,0.2);
+}
+
+.price{
+    font-size:22px;
+    font-weight:bold;
+    color:#16a34a;
+}
+
+.old-price{
+    text-decoration:line-through;
+    color:gray;
+}
+
+.store-badge{
+    font-size:13px;
+}
+
+/* CATEGORY */
+.category-card {
+    border-radius: 15px;
+    transition: 0.3s;
+    font-weight:600;
+    background: white;
+}
+
+.category-card:hover {
+    transform: translateY(-8px) scale(1.05);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+}
+
+/* FEATURES */
+.feature-card {
+    border-radius: 15px;
+    transition: 0.3s;
+}
+
+.feature-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+}
+.nav-link {
+    transition: 0.3s;
+}
+
+.nav-link:hover {
+    transform: translateY(-2px);
+    opacity: 0.8;
+}
+.custom-alert {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.6);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.alert-box {
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    text-align: center;
+    width: 300px;
+    animation: pop 0.3s ease;
+}
+
+.alert-box h4 {
+    margin-bottom: 10px;
+}
+
+.alert-box button {
+    margin-top: 15px;
+    padding: 8px 20px;
+    border: none;
+    background: #2563eb;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+@keyframes pop {
+    from { transform: scale(0.7); }
+    to { transform: scale(1); }
+}
 
     </style>
 </head>
 
 <body>
 
-<!-- ================= NAVBAR ================= -->
+<!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg navbar-dark shadow-sm" style="background:linear-gradient(90deg,#0f172a,#1e293b);">
     <div class="container">
 
-        <a class="navbar-brand fw-bold" href="/">
-            🤖 DealAI
-        </a>
+        <a class="navbar-brand fw-bold" href="/">🤖 DealAI</a>
 
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+        <ul class="navbar-nav ms-auto align-items-center">
 
-        <div class="collapse navbar-collapse" id="navbarsExample">
-            <ul class="navbar-nav ms-auto align-items-center">
+            <li class="nav-item mx-2">
+                <a class="nav-link text-white" href="/">Home</a>
+            </li>
+        
+            <li class="nav-item mx-2">
+                <a class="nav-link text-white" href="/watchlist">Watchlist</a>
+            </li>
+        
+            <li class="nav-item mx-2">
+                <a class="nav-link text-warning fw-semibold" href="/account">👤 Account</a>
+            </li>
+        
+            <li class="nav-item mx-2">
+                <a class="nav-link text-danger fw-semibold" href="/logout">Logout</a>
+            </li>
+        
+        </ul>
 
-                <li class="nav-item">
-                    <a class="nav-link" href="/">Home</a>
-                </li>
-
-                {% if session.get("user_id") %}
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="/watchlist">Watchlist</a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link text-warning fw-semibold" href="/account">
-                            👤 Account
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link text-danger fw-semibold" href="/logout">
-                            Logout
-                        </a>
-                    </li>
-
-                {% else %}
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="/login">Login</a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="/register">Register</a>
-                    </li>
-
-                {% endif %}
-
-            </ul>
-        </div>
     </div>
 </nav>
 
-
-<!-- ================= MAIN CONTENT ================= -->
 <div class="container mt-5 text-center">
 
-    <!-- TITLE -->
-    <div class="mt-4">
-        <h1 class="hero-title display-5">AI E-Commerce Offer Finder 🤖</h1>
-        <p class="text-muted">Compare prices across multiple stores and find the smartest deal instantly.</p>
-    </div>
+    <h1 class="hero-title display-5">AI E-Commerce Offer Finder 🤖</h1>
+    <p class="text-muted">Compare prices across multiple stores and find the smartest deal instantly.</p>
 
-    <!-- SEARCH BAR -->
+    <!-- SEARCH -->
     <form method="POST" action="/" class="mt-4">
-        <div class="input-group w-50 mx-auto shadow rounded-pill overflow-hidden">
+        <div class="input-group w-50 mx-auto shadow rounded-pill">
+
+            <select name="category" class="form-select border-0" style="max-width:160px;">
+                <option value="">🧾 All</option>
+                <option value="electronics">📱 Electronics</option>
+                <option value="furniture">🪑 Furniture</option>
+                <option value="fashion">👕 Fashion</option>
+                <option value="books">📚 Books</option>
+            </select>
+
             <input type="text" name="product"
-                   class="form-control form-control-lg border-0 px-4"
-                   placeholder="Search product (example: iphone, laptop, mobile)"
+                   class="form-control border-0 px-3"
+                   placeholder="🔍 Search product..."
                    required>
 
-            <button class="btn btn-primary px-4">
-                🔍 Search
-            </button>
+            <button class="btn btn-primary px-4">🔍 Search</button>
         </div>
     </form>
 
+    <p class="text-muted mt-2">🔥 Trending: iPhone, Laptop, Sofa</p>
+
+    <!-- BEFORE SEARCH -->
+    {% if not offers %}
+
+    <!-- CATEGORY -->
+    <div class="container mt-5">
+        <h4 class="text-start mb-3">🛍️ Browse Categories</h4>
+        <div class="row text-center">
+            <div class="col-md-3"><div class="card p-3 shadow-sm category-card">📱 Electronics</div></div>
+            <div class="col-md-3"><div class="card p-3 shadow-sm category-card">🪑 Furniture</div></div>
+            <div class="col-md-3"><div class="card p-3 shadow-sm category-card">👕 Fashion</div></div>
+            <div class="col-md-3"><div class="card p-3 shadow-sm category-card">📚 Books</div></div>
+        </div>
+    </div>
+
+    <!-- WHY DEALAI -->
+    <div class="container mt-5">
+        <h4 class="text-start mb-3">🤖 Why DealAI?</h4>
+        <div class="row text-center">
+            <div class="col-md-4">
+                <div class="card p-4 shadow-sm feature-card">
+                    ⚡ Fast Price Comparison
+                    <p class="text-muted">Compare multiple stores instantly</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card p-4 shadow-sm feature-card">
+                    🧠 AI Recommendation
+                    <p class="text-muted">Smart suggestions based on value</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card p-4 shadow-sm feature-card">
+                    🔔 Deal Alerts
+                    <p class="text-muted">Get notified on price drops</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% endif %}
+
+    <!-- AFTER SEARCH -->
     {% if offers %}
 
-    <!-- BEST DEAL -->
     {% if best %}
     <div class="best-card mt-5">
         <h2 class="fw-bold text-dark">🏆 Best Deal Recommended</h2>
@@ -157,7 +281,6 @@
     </div>
     {% endif %}
 
-    <!-- AI EXPLANATION -->
     {% if explanation %}
     <div class="alert alert-info mt-4 text-start shadow-sm">
         <b>🤖 AI Explanation:</b>
@@ -165,7 +288,6 @@
     </div>
     {% endif %}
 
-    <!-- OTHER OFFERS -->
     <div class="row mt-4">
         {% for item in offers %}
         {% if item.rank != 1 %}
@@ -188,56 +310,91 @@
         {% endfor %}
     </div>
 
+    <!-- WHY DEALAI AT BOTTOM -->
+    <div class="container mt-5">
+        <h4 class="text-start mb-3">🤖 Why DealAI?</h4>
+        <div class="row text-center">
+            <div class="col-md-4">
+                <div class="card p-4 shadow-sm feature-card">
+                    ⚡ Fast Price Comparison
+                    <p class="text-muted">Compare multiple stores instantly</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card p-4 shadow-sm feature-card">
+                    🧠 AI Recommendation
+                    <p class="text-muted">Smart suggestions based on value</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card p-4 shadow-sm feature-card">
+                    🔔 Deal Alerts
+                    <p class="text-muted">Get notified on price drops</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     {% endif %}
+
 </div>
-
-
-<!-- ================= ALERT SYSTEM ================= -->
 <script>
+    let lastAlertTimestamp = localStorage.getItem("lastAlertTimestamp");
+    let params = new URLSearchParams(window.location.search);
+    let currentProduct = params.get("product") ? params.get("product").toLowerCase() : null;
+    
+    let redirectProduct = null;
 
-let lastAlertTimestamp = localStorage.getItem("lastAlertTimestamp");
+async function checkAlerts() {
+    const res = await fetch("/alerts");
+    const data = await res.json();
 
-async function checkAlerts(){
+    if (data.alerts && data.alerts.length > 0) {
+        const latest = data.alerts[data.alerts.length - 1];
 
-    try{
-        let res = await fetch("/alerts");
-        let data = await res.json();
+        // store product for redirect
+        redirectProduct = latest.product.toLowerCase();
 
-        if(!data.alerts || data.alerts.length === 0) return;
+        document.getElementById("alertMessage").innerText =
+            `Price ${latest.type.toUpperCase()}!\n` +
+            `${latest.product}\n₹${latest.old_price} → ₹${latest.new_price}` +
+            (currentProduct !== latest.product ? "\n\n(Background update)" : "");
 
-        let last = data.alerts[data.alerts.length - 1];
-
-        if(lastAlertTimestamp && last.timestamp <= lastAlertTimestamp){
-            return;
-        }
-
-        localStorage.setItem("lastAlertTimestamp", last.timestamp);
-        lastAlertTimestamp = last.timestamp;
-
-        alert(
-            "🔔 DEAL ALERT\n\n" +
-            "Product: " + last.product +
-            "\nStore: " + last.store +
-            "\nOld Price: ₹" + last.old_price +
-            "\nNew Price: ₹" + last.new_price
-        );
-
-        location.reload();
-
-    }catch(e){
-        console.log("Alert fetch error");
+        document.getElementById("customAlert").style.display = "flex";
     }
 }
 
-checkAlerts();
-setInterval(checkAlerts, 8000);
 
-</script>
+function closeAlert() {
+    document.getElementById("customAlert").style.display = "none";
 
-<!-- Autofocus search -->
-<script>
-document.querySelector('input[name="product"]').focus();
-</script>
+    // clear alerts
+    fetch("/clear-alerts", { method: "POST" });
+
+    // 🔥 FORCE RELOAD (guaranteed)
+    setTimeout(() => {
+        window.location.reload();
+    }, 300);
+}
+
+setInterval(checkAlerts, 10000);
+
+setInterval(checkAlerts, 10000);
+
+setInterval(checkAlerts, 10000);
+    
+    // run immediately + every 8 sec
+    checkAlerts();
+    setInterval(checkAlerts, 8000);
+    </script>
+<!-- CUSTOM ALERT MODAL -->
+<div id="customAlert" class="custom-alert">
+    <div class="alert-box">
+        <h4>🔔 Deal Alert</h4>
+        <p id="alertMessage"></p>
+        <button onclick="closeAlert()">OK</button>
+    </div>
+</div>
 
 </body>
 </html>

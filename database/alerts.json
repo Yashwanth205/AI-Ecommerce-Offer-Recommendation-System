@@ -1,10 +1,314 @@
 [
     {
         "product": "iphone",
+        "store": "EcomSite1",
+        "old_price": 27000.0,
+        "new_price": 40500.0,
+        "type": "increase",
+        "timestamp": 1774270272.7974699
+    },
+    {
+        "product": "iphone",
+        "store": "EcomSite1",
+        "old_price": 27000.0,
+        "new_price": 40500.0,
+        "type": "increase",
+        "timestamp": 1774270275.598877
+    },
+    {
+        "product": "iphone",
+        "store": "EcomSite1",
+        "old_price": 27000.0,
+        "new_price": 40500.0,
+        "type": "store_change",
+        "timestamp": 1774270276.642462
+    },
+    {
+        "product": "iphone",
+        "store": "EcomSite1",
+        "old_price": 27000.0,
+        "new_price": 40500.0,
+        "type": "store_change",
+        "timestamp": 1774270278.839991
+    },
+    {
+        "product": "iphone",
         "store": "EcomSite2",
-        "old_price": 36000.0,
+        "old_price": 40500.0,
         "new_price": 27000.0,
         "type": "drop",
-        "timestamp": 1773633305.763872
+        "timestamp": 1774270290.0323808
+    },
+    {
+        "product": "iphone",
+        "store": "EcomSite2",
+        "old_price": 40500.0,
+        "new_price": 27000.0,
+        "type": "drop",
+        "timestamp": 1774270292.554448
+    },
+    {
+        "product": "iphone",
+        "store": "EcomSite2",
+        "old_price": 40500.0,
+        "new_price": 27000.0,
+        "type": "store_change",
+        "timestamp": 1774270293.19238
+    },
+    {
+        "product": "iphone",
+        "store": "EcomSite2",
+        "old_price": 40500.0,
+        "new_price": 27000.0,
+        "type": "store_change",
+        "timestamp": 1774270295.827714
+    },
+    {
+        "product": "laptop",
+        "store": "EcomSite1",
+        "old_price": 66300.0,
+        "new_price": 59500.0,
+        "type": "drop",
+        "timestamp": 1774285285.7392151
+    },
+    {
+        "product": "laptop",
+        "store": "EcomSite1",
+        "old_price": 66300.0,
+        "new_price": 59500.0,
+        "type": "drop",
+        "timestamp": 1774285286.470654
+    },
+    {
+        "product": "laptop",
+        "store": "EcomSite1",
+        "old_price": 59500.0,
+        "new_price": 55250.0,
+        "type": "drop",
+        "timestamp": 1774285390.024595
+    },
+    {
+        "product": "laptop",
+        "store": "EcomSite1",
+        "old_price": 59500.0,
+        "new_price": 55250.0,
+        "type": "drop",
+        "timestamp": 1774285390.5651982
+    },
+    {
+        "product": "laptop",
+        "store": "EcomSite1",
+        "old_price": 55250.0,
+        "new_price": 54400.0,
+        "type": "drop",
+        "timestamp": 1774286114.0812218
+    },
+    {
+        "product": "laptop",
+        "store": "EcomSite1",
+        "old_price": 54400.0,
+        "new_price": 51000.0,
+        "type": "drop",
+        "timestamp": 1774286153.434995
+    },
+    {
+        "product": "laptop",
+        "store": "EcomSite1",
+        "old_price": 51000.0,
+        "new_price": 46750.0,
+        "type": "drop",
+        "timestamp": 1774286869.7087822
+    },
+    {
+        "product": "laptop",
+        "store": "EcomSite1",
+        "old_price": 51000.0,
+        "new_price": 46750.0,
+        "type": "drop",
+        "timestamp": 1774286870.512186
+    },
+    {
+        "product": "laptop",
+        "store": "EcomSite1",
+        "old_price": 46750.0,
+        "new_price": 51000.0,
+        "type": "increase",
+        "timestamp": 1774287023.626237
+    },
+    {
+        "product": "laptop",
+        "store": "EcomSite1",
+        "old_price": 46750.0,
+        "new_price": 51000.0,
+        "type": "increase",
+        "timestamp": 1774287024.532182
+    },
+    {
+        "product": "laptop",
+        "store": "EcomSite1",
+        "old_price": 51000.0,
+        "new_price": 46750.0,
+        "type": "drop",
+        "timestamp": 1774327382.736764
+    },
+    {
+        "product": "laptop",
+        "store": "EcomSite1",
+        "old_price": 51000.0,
+        "new_price": 46750.0,
+        "type": "drop",
+        "timestamp": 1774327383.768086
+    },
+    {
+        "product": "laptop",
+        "store": "EcomSite1",
+        "old_price": 46750.0,
+        "new_price": 51000.0,
+        "type": "increase",
+        "timestamp": 1774327467.703359
+    },
+    {
+        "product": "laptop",
+        "store": "EcomSite1",
+        "old_price": 46750.0,
+        "new_price": 51000.0,
+        "type": "increase",
+        "timestamp": 1774327468.69496
+    },
+    {
+        "product": "laptop",
+        "store": "EcomSite1",
+        "old_price": 51000.0,
+        "new_price": 46750.0,
+        "type": "drop",
+        "timestamp": 1774327685.4609191
+    },
+    {
+        "product": "laptop",
+        "store": "EcomSite1",
+        "old_price": 46750.0,
+        "new_price": 51000.0,
+        "type": "increase",
+        "timestamp": 1774328164.231642
+    },
+    {
+        "product": "laptop",
+        "store": "EcomSite1",
+        "old_price": 46750.0,
+        "new_price": 51000.0,
+        "type": "increase",
+        "timestamp": 1774328165.110312
+    },
+    {
+        "product": "laptop",
+        "store": "EcomSite1",
+        "old_price": 51000.0,
+        "new_price": 55250.0,
+        "type": "increase",
+        "timestamp": 1774328198.019618
+    },
+    {
+        "product": "laptop",
+        "store": "EcomSite1",
+        "old_price": 51000.0,
+        "new_price": 55250.0,
+        "type": "increase",
+        "timestamp": 1774328198.8949308
+    },
+    {
+        "product": "laptop",
+        "store": "EcomSite1",
+        "old_price": 55250.0,
+        "new_price": 51000.0,
+        "type": "drop",
+        "timestamp": 1774328334.344656
+    },
+    {
+        "product": "laptop",
+        "store": "EcomSite1",
+        "old_price": 55250.0,
+        "new_price": 51000.0,
+        "type": "drop",
+        "timestamp": 1774328335.4133031
+    },
+    {
+        "product": "laptop",
+        "store": "EcomSite1",
+        "old_price": 51000.0,
+        "new_price": 46750.0,
+        "type": "drop",
+        "timestamp": 1774328887.743474
+    },
+    {
+        "product": "laptop",
+        "store": "EcomSite1",
+        "old_price": 51000.0,
+        "new_price": 46750.0,
+        "type": "drop",
+        "timestamp": 1774328888.789043
+    },
+    {
+        "product": "laptop",
+        "store": "EcomSite1",
+        "old_price": 46750.0,
+        "new_price": 51000.0,
+        "type": "increase",
+        "timestamp": 1774329023.32697
+    },
+    {
+        "product": "laptop",
+        "store": "EcomSite1",
+        "old_price": 46750.0,
+        "new_price": 51000.0,
+        "type": "increase",
+        "timestamp": 1774329024.397238
+    },
+    {
+        "product": "laptop",
+        "store": "EcomSite1",
+        "old_price": 51000.0,
+        "new_price": 46750.0,
+        "type": "drop",
+        "timestamp": 1774329057.623818
+    },
+    {
+        "product": "laptop",
+        "store": "EcomSite1",
+        "old_price": 51000.0,
+        "new_price": 46750.0,
+        "type": "drop",
+        "timestamp": 1774329058.726484
+    },
+    {
+        "product": "laptop",
+        "store": "EcomSite1",
+        "old_price": 46750.0,
+        "new_price": 51000.0,
+        "type": "increase",
+        "timestamp": 1774329081.251734
+    },
+    {
+        "product": "laptop",
+        "store": "EcomSite1",
+        "old_price": 46750.0,
+        "new_price": 51000.0,
+        "type": "increase",
+        "timestamp": 1774329082.285571
+    },
+    {
+        "product": "laptop",
+        "store": "EcomSite1",
+        "old_price": 51000.0,
+        "new_price": 55250.0,
+        "type": "increase",
+        "timestamp": 1774329115.099345
+    },
+    {
+        "product": "laptop",
+        "store": "EcomSite1",
+        "old_price": 51000.0,
+        "new_price": 55250.0,
+        "type": "increase",
+        "timestamp": 1774329116.083693
     }
-]]
+]

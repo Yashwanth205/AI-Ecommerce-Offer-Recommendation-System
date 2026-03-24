@@ -11,6 +11,14 @@ import threading
 import json
 import os
 import sqlite3
+# ✅ SUPABASE IMPORT
+from supabase import create_client
+
+# ✅ SUPABASE CONFIG
+url = "https://hsyiwhuksmnzkpfezvxn.supabase.co"
+key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhzeWl3aHVrc21uemtwZmV6dnhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMTEyNTMsImV4cCI6MjA4OTg4NzI1M30.A7XOs-uKHJoH4sLMYjXEJ-AB361JBZHYbfm4DfXllSI"
+supabase = create_client(url, key)
+
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "..", "database", "users.db")
@@ -39,31 +47,17 @@ create_user_table()
 # ---------------------------------------------------
 @app.route("/alerts")
 def get_alerts():
-    try:
-        if os.path.exists(ALERTS_PATH):
-            with open(ALERTS_PATH, "r") as f:
-                alerts = json.load(f)
-        else:
-            alerts = []
-    except Exception as e:
-        print("Alert read error:", e)
-        alerts = []
-
-    return jsonify({"alerts": alerts})
+    response = supabase.table("alerts").select("*").execute()
+    return {"alerts": response.data}
 
 
 # ---------------------------------------------------
 # CLEAR ALERTS
 # ---------------------------------------------------
-@app.route("/clear_alerts")
+@app.route("/clear-alerts", methods=["POST"])
 def clear_alerts():
-    try:
-        with open(ALERTS_PATH, "w") as f:
-            json.dump([], f)
-    except Exception as e:
-        print("Alert clear error:", e)
-
-    return jsonify({"status": "cleared"})
+    supabase.table("alerts").delete().neq("id", 0).execute()
+    return {"status": "cleared"}
 
 
 # ---------------------------------------------------
@@ -232,9 +226,15 @@ def remove_watch(product_name):
 @app.route("/", methods=["GET", "POST"])
 def home():
 
-    if request.method == "POST":
+    product = None
 
+    # 🔥 HANDLE BOTH POST + GET
+    if request.method == "POST":
         product = request.form.get("product", "").strip()
+    else:
+        product = request.args.get("product", "").strip()
+
+    if product:
 
         if product == "":
             return render_template("index.html", offers=[], best=None,
@@ -265,6 +265,7 @@ def home():
                                best=best_offer,
                                explanation=explanation)
 
+    # 🔥 DEFAULT HOME
     return render_template("index.html", offers=None, best=None, explanation=None)
 
 
@@ -274,6 +275,7 @@ def home():
 def start_agent():
     with app.app_context():
         run_agent()
+
 
 
 if __name__ == "__main__":

@@ -9,6 +9,12 @@
         body{
             background: linear-gradient(135deg,#0f172a,#1e3a8a);
             min-height:100vh;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* 🔥 NAVBAR */
+        .navbar{
+            background: linear-gradient(90deg,#020617,#1e293b);
         }
 
         .page-title{
@@ -16,6 +22,7 @@
             font-weight:700;
         }
 
+        /* 🔥 CARD */
         .watch-card{
             background:white;
             border-radius:18px;
@@ -26,8 +33,8 @@
         }
 
         .watch-card:hover{
-            transform:translateY(-8px);
-            box-shadow:0 20px 40px rgba(0,0,0,0.3);
+            transform:translateY(-10px) scale(1.02);
+            box-shadow:0 25px 45px rgba(0,0,0,0.35);
         }
 
         .product-name{
@@ -53,6 +60,27 @@
             margin-bottom:15px;
         }
 
+        /* 🔥 BUTTONS */
+        .btn-primary{
+            background: linear-gradient(135deg,#2563eb,#3b82f6);
+            border:none;
+            font-weight:600;
+            transition:0.3s;
+        }
+
+        .btn-primary:hover{
+            transform:scale(1.05);
+        }
+
+        .btn-outline-danger{
+            transition:0.3s;
+        }
+
+        .btn-outline-danger:hover{
+            background:red;
+            color:white;
+        }
+
         .empty-box{
             background:white;
             padding:40px;
@@ -60,10 +88,48 @@
             text-align:center;
             box-shadow:0 15px 35px rgba(0,0,0,0.25);
         }
+        .nav-link {
+    transition: 0.3s;
+}
+
+.nav-link:hover {
+    transform: translateY(-2px);
+    opacity: 0.8;
+}
+
     </style>
 </head>
 
 <body>
+
+<!-- 🔥 NAVBAR (ADDED) -->
+<nav class="navbar navbar-expand-lg navbar-dark shadow-sm">
+    <div class="container">
+
+        <a class="navbar-brand fw-bold" href="/">🤖 DealAI</a>
+
+        <ul class="navbar-nav ms-auto align-items-center">
+
+            <li class="nav-item mx-2">
+                <a class="nav-link text-white" href="/">Home</a>
+            </li>
+        
+            <li class="nav-item mx-2">
+                <a class="nav-link text-white" href="/watchlist">Watchlist</a>
+            </li>
+        
+            <li class="nav-item mx-2">
+                <a class="nav-link text-warning fw-semibold" href="/account">👤 Account</a>
+            </li>
+        
+            <li class="nav-item mx-2">
+                <a class="nav-link text-danger fw-semibold" href="/logout">Logout</a>
+            </li>
+        
+        </ul>
+
+    </div>
+</nav>
 
 <div class="container mt-5">
 
@@ -83,15 +149,18 @@
                     📦 {{ product.product | capitalize }}
                 </div>
 
-                <!-- LAST BEST PRICE (if available) -->
+                <!-- LAST BEST PRICE -->
                 {% if product.last_best_price %}
-                <div class="price-box">
-                    💰 Last Best Price: <b>₹{{ product.last_best_price }}</b><br>
-                    🏬 Store: {{ product.last_best_store }}
-                </div>
-                {% endif %}
-
-                <!-- MONITORING INFO -->
+<div class="price-box">
+    💰 Last Best Price: <b>₹{{ product.last_best_price }}</b><br>
+    🏬 Store: {{ product.last_best_store }}
+</div>
+{% else %}
+<a href="/?product={{ product.product }}" class="btn btn-warning w-100 mb-2">
+    🔎 Fetch Best Price
+</a>
+{% endif %}
+                <!-- MONITORING -->
                 <div class="monitor-box">
                     🤖 DealAI is monitoring this product for price changes across stores.
                 </div>
@@ -101,7 +170,8 @@
                     🔎 Check Best Deal
                 </a>
 
-                <a href="{{ url_for('remove_watch', product_name=product.product) }}" class="btn btn-outline-danger w-100">
+                <a href="{{ url_for('remove_watch', product_name=product.product) }}" 
+                   class="btn btn-outline-danger w-100">
                     ❌ Remove
                 </a>
 

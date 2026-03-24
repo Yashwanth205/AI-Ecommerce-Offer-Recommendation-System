@@ -8,6 +8,14 @@ from emailer import send_price_alert
 from fetcher import fetch_all_offers
 from scorer import rank_offers
 
+# ✅ SUPABASE IMPORT
+from supabase import create_client
+
+# ✅ SUPABASE CONFIG
+url = "https://hsyiwhuksmnzkpfezvxn.supabase.co"
+key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhzeWl3aHVrc21uemtwZmV6dnhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMTEyNTMsImV4cCI6MjA4OTg4NzI1M30.A7XOs-uKHJoH4sLMYjXEJ-AB361JBZHYbfm4DfXllSI"
+supabase = create_client(url, key)
+
 
 # ---------- SAFE PATHS ----------
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -112,7 +120,6 @@ def check_prices():
 
     for item in watchlist:
 
-        # safety check
         if "user_id" not in item:
             continue
 
@@ -152,6 +159,15 @@ def check_prices():
             save_alert(product, current_store, old_price, current_price, "drop")
             notify_user(user_id, product, current_store, old_price, current_price, "drop")
 
+            # ✅ SUPABASE INSERT
+            supabase.table("alerts").insert({
+                "user_id": user_id,
+                "product": product,
+                "old_price": old_price,
+                "new_price": current_price,
+                "type": "drop"
+            }).execute()
+
         # ---------- PRICE INCREASE ----------
         elif current_price > old_price:
 
@@ -160,6 +176,15 @@ def check_prices():
 
             save_alert(product, current_store, old_price, current_price, "increase")
             notify_user(user_id, product, current_store, old_price, current_price, "increase")
+
+            # ✅ SUPABASE INSERT
+            supabase.table("alerts").insert({
+                "user_id": user_id,
+                "product": product,
+                "old_price": old_price,
+                "new_price": current_price,
+                "type": "increase"
+            }).execute()
 
         # ---------- STORE CHANGE ----------
         if current_store != old_store:
@@ -170,7 +195,16 @@ def check_prices():
             save_alert(product, current_store, old_price, current_price, "store_change")
             notify_user(user_id, product, current_store, old_price, current_price, "store_change")
 
-        # update memory
+            # ✅ SUPABASE INSERT
+            supabase.table("alerts").insert({
+                "user_id": user_id,
+                "product": product,
+                "old_price": old_price,
+                "new_price": current_price,
+                "type": "store_change"
+            }).execute()
+
+        # ---------- UPDATE MEMORY ----------
         if current_price != old_price or current_store != old_store:
             item["last_best_price"] = current_price
             item["last_best_store"] = current_store
