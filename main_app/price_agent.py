@@ -4,9 +4,9 @@ import schedule
 import sqlite3
 import os
 
-from emailer import send_price_alert
-from fetcher import fetch_all_offers
-from scorer import rank_offers
+from main_app.emailer import send_price_alert
+from main_app.fetcher import fetch_all_offers
+from main_app.scorer import rank_offers
 
 # ✅ SUPABASE IMPORT
 from supabase import create_client
