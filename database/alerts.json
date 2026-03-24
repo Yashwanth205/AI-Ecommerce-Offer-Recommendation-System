@@ -310,5 +310,45 @@
         "new_price": 55250.0,
         "type": "increase",
         "timestamp": 1774329116.083693
+    },
+    {
+        "product": "iphone",
+        "store": "EcomSite1",
+        "old_price": 27000.0,
+        "new_price": 40500.0,
+        "type": "increase",
+        "timestamp": 1774340239.985698
+    },
+    {
+        "product": "iphone",
+        "store": "EcomSite1",
+        "old_price": 27000.0,
+        "new_price": 40500.0,
+        "type": "store_change",
+        "timestamp": 1774340250.1899562
+    },
+    {
+        "product": "iphone",
+        "store": "EcomSite2",
+        "old_price": 40500.0,
+        "new_price": 27000.0,
+        "type": "drop",
+        "timestamp": 1774340266.605361
+    },
+    {
+        "product": "iphone",
+        "store": "EcomSite2",
+        "old_price": 40500.0,
+        "new_price": 27000.0,
+        "type": "store_change",
+        "timestamp": 1774340272.107751
+    },
+    {
+        "product": "laptop",
+        "store": "EcomSite1",
+        "old_price": 55250.0,
+        "new_price": 51000.0,
+        "type": "drop",
+        "timestamp": 1774342057.3922591
     }
 ]
