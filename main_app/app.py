@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for, flash
 from main_app.scorer import rank_offers
-from memory import add_to_watchlist
+from main_app.memory import add_to_watchlist
 from main_app.price_agent import run_agent
 from main_app.user_model import create_user_table
 from main_app.nlp_processor import process_query
