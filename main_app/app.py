@@ -2,7 +2,6 @@ from flask import Flask, render_template, request, jsonify, session, redirect, u
 from main_app.scorer import rank_offers
 from main_app.memory import add_to_watchlist
 from main_app.price_agent import run_agent
-from main_app.user_model import create_user_table
 from main_app.nlp_processor import process_query
 from main_app.fetcher import fetch_all_offers
 from main_app.ai_explainer import generate_explanation
@@ -10,7 +9,6 @@ from main_app.ai_explainer import generate_explanation
 import threading
 import json
 import os
-import sqlite3
 # ✅ SUPABASE IMPORT
 from supabase import create_client
 
@@ -20,8 +18,7 @@ key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imhz
 supabase = create_client(url, key)
 
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DB_PATH = os.path.join(BASE_DIR, "..", "database", "users.db")
+
 
 
 app = Flask(__name__)
@@ -35,11 +32,11 @@ def inject_user():
 
 
 # ---------------- ALERT FILE ----------------
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ALERTS_PATH = os.path.join(BASE_DIR, "../database/alerts.json")
 
 
 # ---------------- INITIALIZE USER DATABASE ----------------
-create_user_table()
 
 
 # ---------------------------------------------------
@@ -63,69 +60,12 @@ def clear_alerts():
 # ---------------------------------------------------
 # REGISTER
 # ---------------------------------------------------
-@app.route("/register", methods=["GET","POST"])
-def register():
-
-    if request.method == "POST":
-
-        username = request.form["username"]
-        email = request.form["email"]
-        phone = request.form["phone"]
-        password = request.form["password"]
-
-        try:
-            conn = sqlite3.connect(DB_PATH)
-            cur = conn.cursor()
-
-            cur.execute(
-                "INSERT INTO users (username, email, phone, password) VALUES (?, ?, ?, ?)",
-                (username, email, phone, password)
-            )
-
-            conn.commit()
-            conn.close()
-
-            return redirect(url_for("login"))
-
-        except sqlite3.IntegrityError:
-            return render_template("register.html", error="Email already registered. Please login.")
-
-    return render_template("register.html")
-
-
-# ---------------------------------------------------
-# LOGIN
-# ---------------------------------------------------
 @app.route("/login", methods=["GET","POST"])
 def login():
-
     if request.method == "POST":
-
-        email = request.form["email"]
-        password = request.form["password"]
-
-        conn = sqlite3.connect(DB_PATH)
-        cur = conn.cursor()
-
-        cur.execute(
-            "SELECT id, username, email, phone, password FROM users WHERE email=?",
-            (email,)
-        )
-
-        user = cur.fetchone()
-        conn.close()
-
-        if user and user[4] == password:
-            session["user_id"] = user[0]
-            session["username"] = user[1]
-            session["email"] = user[2]
-            session["phone"] = user[3]
-
-            return redirect(url_for("home"))
-
-        else:
-            return render_template("login.html", error="Invalid Email or Password")
-
+        session["user_id"] = 1
+        session["username"] = request.form["email"]
+        return redirect(url_for("home"))
     return render_template("login.html")
 
 

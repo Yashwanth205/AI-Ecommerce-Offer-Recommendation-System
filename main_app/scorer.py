@@ -18,26 +18,17 @@ def rank_offers(offers):
 
     offers = [copy.deepcopy(o) for o in offers]
 
-    # ------------------------------
-    # STEP 1: calculate final price
-    # ------------------------------
     for offer in offers:
         offer["final_price"] = compute_final_price(offer)
 
-    # ------------------------------
-    # STEP 2: STRICT PRICE PRIORITY
-    # ------------------------------
-    # Sort primarily by final price
-    # Then rating
-    # Then availability
-    # Discount is LAST
+   
     ranked_offers = sorted(
         offers,
         key=lambda o: (
-            o["final_price"],              # MOST IMPORTANT
-            -o.get("rating", 0),           # better rating preferred
-            not o.get("availability", True),  # in stock preferred
-            -o.get("discount", 0)          # least important
+            o["final_price"],              
+            -o.get("rating", 0),           
+            not o.get("availability", True),  
+            -o.get("discount", 0)         
         )
     )
 
