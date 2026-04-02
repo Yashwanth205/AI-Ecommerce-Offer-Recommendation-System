@@ -4,3 +4,7 @@ requests==2.31.0
 
 supabase==1.0.3
 httpx==0.23.3
+
+schedule==1.2.0
+
+nltk==3.8.1
