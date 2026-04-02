@@ -1,5 +1,8 @@
 import nltk
 
+nltk.download('stopwords', quiet=True)
+nltk.download('punkt', quiet=True)
+
 # ✅ Safe download (only if missing)
 try:
     from nltk.corpus import stopwords
