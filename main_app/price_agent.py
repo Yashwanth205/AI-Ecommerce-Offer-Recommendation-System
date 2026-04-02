@@ -85,7 +85,9 @@ def check_prices():
                 if not best_offer:
                     continue
 
-                current_price = best_offer.get("final_price", 0)
+                price = best_offer.get("price", 0)
+                discount = best_offer.get("discount", 0)
+                current_price = price - (price * discount / 100)
                 current_store = best_offer.get("store", "Unknown")
                 current_offer_id = best_offer.get("offer_id", "")
 
@@ -95,7 +97,7 @@ def check_prices():
                 print(f"👉 {product}: ₹{current_price}")
 
                 # ---------- PRICE DROP ----------
-                if old_price and current_price < old_price:
+                if not old_price or current_price < old_price:
 
                     print("🔻 PRICE DROP")
 
@@ -171,7 +173,5 @@ schedule.every(30).seconds.do(check_prices)
 
 # ---------------- RUN ----------------
 def run_agent():
-    print("🧠 Agent started...")
-    while True:
-        schedule.run_pending()
-        time.sleep(2)
+    print("🧠 Agent triggered manually...")
+    check_prices()

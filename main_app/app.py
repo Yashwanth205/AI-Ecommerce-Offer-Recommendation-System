@@ -47,10 +47,9 @@ def get_alerts():
 
     return {"alerts": response.data}
 @app.route("/run-agent")
-def run_agent_once():
-    from price_agent import check_prices
-    check_prices()
-    return "Agent executed"
+def run_agent_route():
+    run_agent()
+    return "✅ Agent executed"
 # ---------------------------------------------------
 # CLEAR ALERTS
 # ---------------------------------------------------
