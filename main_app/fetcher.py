@@ -20,27 +20,21 @@ def convert_availability(value):
 def normalize_item(item, store, product_name):
 
     try:
-        name = item.get("name")
-        if not name or str(name).strip().lower() in ["", "none", "null", "unknown"]:
-            name = product_name
-
-        rating = item.get("rating")
-        if rating is None or str(rating).strip() == "":
-            rating = round(3.5 + (hash(str(name)) % 15) / 10, 1)
+        name = item.get("name") or product_name
 
         return {
             "offer_id": str(uuid.uuid4()),
-            "name": str(name).strip(),
-            "price": float(item.get("price", 0) or 0),
-            "discount": float(item.get("discount", 0) or 0),
-            "rating": float(rating),
-            "offer": float(item.get("offer", 0) or 0),
+            "name": name,
+            "price": float(item.get("price", 0)),
+            "discount": float(item.get("discount", 0)),
+            "rating": float(item.get("rating", 0)),
+            "offer": 0,  # you are not using this in DB
             "availability": convert_availability(item.get("availability", True)),
             "store": store
         }
 
     except Exception as e:
-        print(f"❌ {store} normalization error:", e)
+        print("ERROR:", e)
         return None
 
 
@@ -56,8 +50,8 @@ def fetch_all_offers(product_name):
 
     offers = []
 
-    SITE1_URL = "https://ecommerce1-8ycx.onrender.com/api/search"
-    SITE2_URL = "https://ecommerce-v0n8.onrender.com/api/search"
+    SITE1_URL = "https://ecommerce1-8ycx.onrender.com"
+    SITE2_URL = "https://ecommerce-v0n8.onrender.com"
 
     # ----------- Ecommerce Site 1 -----------
     try:
