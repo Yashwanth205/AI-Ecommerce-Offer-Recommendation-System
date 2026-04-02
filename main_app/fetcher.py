@@ -61,7 +61,7 @@ def fetch_all_offers(product_name):
 
     # ----------- Ecommerce Site 1 -----------
     try:
-        res1 = requests.get(SITE1_URL, params={"q": product_name}, timeout=5)
+        res1 = requests.get(f"{SITE1_URL}/api/search", params={"q": product_name})
         res1.raise_for_status()
 
         data1 = res1.json()
@@ -77,7 +77,7 @@ def fetch_all_offers(product_name):
 
     # ----------- Ecommerce Site 2 -----------
     try:
-        res2 = requests.get(SITE2_URL, params={"q": product_name}, timeout=5)
+        res2 = requests.get(f"{SITE2_URL}/api/search", params={"q": product_name})
         res2.raise_for_status()
 
         data2 = res2.json()
