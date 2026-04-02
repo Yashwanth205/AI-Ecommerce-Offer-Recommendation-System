@@ -43,11 +43,14 @@ def get_alerts():
         .select("*") \
         .eq("user_id", user_id) \
         .order("id", desc=True) \
-        .limit(1) \
         .execute()
 
     return {"alerts": response.data}
-
+@app.route("/run-agent")
+def run_agent_once():
+    from price_agent import check_prices
+    check_prices()
+    return "Agent executed"
 # ---------------------------------------------------
 # CLEAR ALERTS
 # ---------------------------------------------------
