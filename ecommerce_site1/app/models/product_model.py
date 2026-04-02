@@ -1,53 +1,25 @@
-import sqlite3
 import os
+from supabase import create_client
 
-# ✅ Base directory (safe for Render)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# Load env variables
+SUPABASE_URL = os.getenv("https://hsyiwhuksmnzkpfezvxn.supabase.co")
+SUPABASE_KEY = os.getenv("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhzeWl3aHVrc21uemtwZmV6dnhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMTEyNTMsImV4cCI6MjA4OTg4NzI1M30.A7XOs-uKHJoH4sLMYjXEJ-AB361JBZHYbfm4DfXllSI")
 
-# ✅ Ensure database folder exists
-DB_FOLDER = os.path.join(BASE_DIR, "database")
-os.makedirs(DB_FOLDER, exist_ok=True)
-
-# ✅ Database path
-DB_PATH = os.path.join(DB_FOLDER, "database2.db")
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 
-def get_connection():
-    return sqlite3.connect(DB_PATH)
+# ✅ Get all products
+def get_all_products():
+    response = supabase.table("products").select("*").execute()
+    return response.data
 
 
-def create_table():
-    try:
-        conn = get_connection()
-        cursor = conn.cursor()
-
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS products (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT NOT NULL,
-                price REAL NOT NULL,
-                discount INTEGER,
-                availability TEXT
-            )
-        """)
-
-        conn.commit()
-        conn.close()
-
-    except Exception as e:
-        print("Create table error:", e)
-
-
-def add_rating_column():
-    try:
-        conn = get_connection()
-        cursor = conn.cursor()
-
-        cursor.execute("ALTER TABLE products ADD COLUMN rating REAL DEFAULT 0")
-
-        conn.commit()
-        conn.close()
-
-    except Exception:
-        # Column already exists
-        pass
+# ✅ Add product
+def add_product(name, price, discount, availability, rating):
+    supabase.table("products").insert({
+        "name": name,
+        "price": price,
+        "discount": discount,
+        "availability": availability,
+        "rating": rating
+    }).execute()

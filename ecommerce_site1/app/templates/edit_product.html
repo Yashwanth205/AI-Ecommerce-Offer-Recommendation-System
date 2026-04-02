@@ -1,15 +1,36 @@
 <h2>Edit Product</h2>
 
 <form method="POST">
-    Name: <input type="text" name="name" value="{{ product[1] }}"><br><br>
-    Price: <input type="number" name="price" value="{{ product[2] }}"><br><br>
-    Discount: <input type="number" name="discount" value="{{ product[3] }}"><br><br>
-    Availability: <input type="text" name="availability" value="{{ product[4] }}"><br><br>
-    <label>Rating:</label><br>
-    <input type="number" name="rating" step="0.1" min="0" max="5" value="{{ product[5] }}">
+
+    Name: 
+    <input type="text" name="name" value="{{ product.name }}" required>
     <br><br>
-    
+
+    Price: 
+    <input type="number" name="price" step="0.01" value="{{ product.price }}" required>
+    <br><br>
+
+    Discount: 
+    <input type="number" name="discount" value="{{ product.discount }}">
+    <br><br>
+
+    <label>Rating:</label><br>
+    <input type="number" name="rating" step="0.1" min="0" max="5" value="{{ product.rating }}">
+    <br><br>
+
+    <label>Availability:</label><br>
+
+    <input type="radio" name="availability" value="In Stock"
+        {% if product.availability == "In Stock" %}checked{% endif %}>
+    <label>In Stock</label>
+
+    <input type="radio" name="availability" value="Out of Stock"
+        {% if product.availability == "Out of Stock" %}checked{% endif %}>
+    <label>Out of Stock</label>
+
+    <br><br>
+
     <button type="submit">Update Product</button>
 </form>
 
-<a href="/products">Back</a>
+<a href="/">Back</a>
