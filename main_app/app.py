@@ -1,10 +1,10 @@
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for, flash
-from scorer import rank_offers
-from memory import add_to_watchlist
-from price_agent import run_agent
-from nlp_processor import process_query
-from fetcher import fetch_all_offers
-from ai_explainer import generate_explanation
+from main_app.scorer import rank_offers
+from main_app.memory import add_to_watchlist
+from main_app.price_agent import run_agent
+from main_app.nlp_processor import process_query
+from main_app.fetcher import fetch_all_offers
+from main_app.ai_explainer import generate_explanation
 
 import threading
 import json
