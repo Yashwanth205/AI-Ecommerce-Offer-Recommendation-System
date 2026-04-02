@@ -54,6 +54,12 @@
             font-size:16px;
             font-weight:500;
         }
+
+        .title{
+            font-weight:600;
+            color:#64748b;
+            font-size:14px;
+        }
     </style>
 </head>
 
@@ -61,22 +67,33 @@
 
 <div class="account-card">
 
+    <!-- 🔥 AVATAR (Name → Email fallback) -->
     <div class="avatar">
-        {{ username[0]|upper }}
+        {{ user.name[0]|upper if user.name else (user.email[0]|upper if user.email else "U") }}
     </div>
 
-    <h3 class="mb-4">{{ username }}</h3>
+    <!-- 🔥 NAME (fallback to email) -->
+    <h3 class="mb-2">
+        {{ user.name if user.name else user.email }}
+    </h3>
 
+    <div class="title mb-3">My Account</div>
+
+    <!-- EMAIL -->
     <div class="info-box">
         <div class="label">Email</div>
-        <div class="value">{{ email }}</div>
+        <div class="value">{{ user.email }}</div>
     </div>
 
+    <!-- PHONE -->
     <div class="info-box">
         <div class="label">Phone Number</div>
-        <div class="value">{{ phone }}</div>
+        <div class="value">
+            {{ user.phone if user.phone else "Not provided" }}
+        </div>
     </div>
 
+    <!-- BUTTONS -->
     <a href="/" class="btn btn-primary w-100 mt-3">Go to Home</a>
     <a href="/logout" class="btn btn-danger w-100 mt-2">Logout</a>
 

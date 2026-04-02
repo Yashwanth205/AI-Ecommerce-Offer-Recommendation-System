@@ -43,7 +43,14 @@
         <h3 class="text-center mb-2 brand-title">DealAI</h3>
         <h5 class="text-center mb-4">Welcome Back 👋</h5>
 
-        <!-- Flash message (invalid login) -->
+        <!-- ✅ Show error from backend -->
+        {% if error %}
+            <div class="alert alert-danger text-center">
+                {{ error }}
+            </div>
+        {% endif %}
+
+        <!-- ✅ Flash message (optional) -->
         {% with messages = get_flashed_messages() %}
         {% if messages %}
             <div class="alert alert-danger text-center">

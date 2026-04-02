@@ -350,5 +350,69 @@
         "new_price": 51000.0,
         "type": "drop",
         "timestamp": 1774342057.3922591
+    },
+    {
+        "product": "iphone",
+        "store": "EcomSite1",
+        "old_price": 27000.0,
+        "new_price": 40500.0,
+        "type": "increase",
+        "timestamp": 1774763906.1298711
+    },
+    {
+        "product": "iphone",
+        "store": "EcomSite1",
+        "old_price": 27000.0,
+        "new_price": 40500.0,
+        "type": "store_change",
+        "timestamp": 1774763908.111903
+    },
+    {
+        "product": "iphone",
+        "store": "EcomSite2",
+        "old_price": 40500.0,
+        "new_price": 27000.0,
+        "type": "drop",
+        "timestamp": 1774763918.56043
+    },
+    {
+        "product": "iphone",
+        "store": "EcomSite2",
+        "old_price": 40500.0,
+        "new_price": 27000.0,
+        "type": "drop",
+        "timestamp": 1774763932.0792792
+    },
+    {
+        "product": "iphone",
+        "store": "EcomSite2",
+        "old_price": 40500.0,
+        "new_price": 27000.0,
+        "type": "store_change",
+        "timestamp": 1774763932.6289039
+    },
+    {
+        "product": "iphone",
+        "store": "Ecommerce Site 2",
+        "old_price": 27000.0,
+        "new_price": 27000.0,
+        "type": "store_change",
+        "timestamp": 1774774108.683824
+    },
+    {
+        "product": "iphone",
+        "store": "Ecommerce Site 2",
+        "old_price": 27000.0,
+        "new_price": 27000.0,
+        "type": "store_change",
+        "timestamp": 1774774376.969975
+    },
+    {
+        "product": "iphone",
+        "store": "Ecommerce Site 2",
+        "old_price": 27000.0,
+        "new_price": 27000.0,
+        "type": "store_change",
+        "timestamp": 1774775233.191545
     }
 ]

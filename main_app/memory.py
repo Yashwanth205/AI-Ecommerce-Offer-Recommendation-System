@@ -1,101 +1,89 @@
-import json
-import os
 from flask import session
+from supabase import create_client
 
-# absolute safe path
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-WATCHLIST_PATH = os.path.join(BASE_DIR, "../database/watchlist.json")
-
-
-# -----------------------------
-# Create file if not exists
-# -----------------------------
-def ensure_file():
-    if not os.path.exists(WATCHLIST_PATH):
-        with open(WATCHLIST_PATH, "w") as f:
-            json.dump([], f)
+# Supabase config
+url = "https://hsyiwhuksmnzkpfezvxn.supabase.co"
+key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhzeWl3aHVrc21uemtwZmV6dnhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMTEyNTMsImV4cCI6MjA4OTg4NzI1M30.A7XOs-uKHJoH4sLMYjXEJ-AB361JBZHYbfm4DfXllSI"
+supabase = create_client(url, key)
 
 
 # -----------------------------
-# Load watchlist safely
+# Add product to watchlist
 # -----------------------------
-def load_watchlist():
-    ensure_file()
+def add_to_watchlist(product_name, best_offer):
 
-    try:
-        with open(WATCHLIST_PATH, "r") as f:
-            data = json.load(f)
+    if "user_id" not in session:
+        print("❌ User not logged in")
+        return
 
-            # file corrupted protection
-            if not isinstance(data, list):
-                return []
+    user_id = session["user_id"]
+    product_name = product_name.strip().lower()
 
-            return data
+    # Check duplicate
+    existing = supabase.table("watchlist") \
+        .select("*") \
+        .eq("user_id", user_id) \
+        .eq("product", product_name) \
+        .execute()
 
-    except Exception as e:
-        print("Watchlist read error:", e)
-        return []
+    if existing.data:
+        print("⚠️ Already in watchlist")
+        return
+
+    # ✅ INSERT FULL DATA
+    data = {
+        "user_id": user_id,
+        "product": product_name,
+        "last_best_price": best_offer.get("final_price", 0),
+        "last_best_store": best_offer.get("store", "Unknown"),
+        "last_best_offer_id": best_offer.get("offer_id", "")
+    }
+
+    print("✅ Saving to Supabase:", data)
+
+    supabase.table("watchlist").insert(data).execute()
+
+    print(f"📌 Added to watchlist: {product_name}")
 
 
 # -----------------------------
-# Save watchlist
+# Update price (VERY IMPORTANT FIX)
 # -----------------------------
-def save_watchlist(data):
-    with open(WATCHLIST_PATH, "w") as f:
-        json.dump(data, f, indent=4)
+def update_price(product_name, price, store, offer_id):
 
-
-# -----------------------------
-# Add product to watchlist (PER USER)
-# -----------------------------
-def add_to_watchlist(product):
-
-    # If not logged in → do nothing
     if "user_id" not in session:
         return
 
     user_id = session["user_id"]
-
-    # normalize product name
-    product = product.strip().lower()
-
-    watchlist = load_watchlist()
-
-    # prevent duplicate FOR SAME USER ONLY
-    for item in watchlist:
-        if item["product"] == product and item["user_id"] == user_id:
-            return
-
-    # add new tracking item
-    watchlist.append({
-        "user_id": user_id,
-        "product": product,
-        "last_best_price": None,
-        "last_best_store": None,
-        "last_best_offer_id": None
-    })
-
-    save_watchlist(watchlist)
-    print(f"📌 Added to watchlist: {product} (User {user_id})")
-
-
-# -----------------------------
-# Update best price (AGENT USE)
-# -----------------------------
-def update_price(product_name, price, store, offer_id):
-
     product_name = product_name.strip().lower()
-    watchlist = load_watchlist()
 
-    updated = False
+    # 🔍 Get old price first
+    existing = supabase.table("watchlist") \
+        .select("*") \
+        .eq("user_id", user_id) \
+        .eq("product", product_name) \
+        .execute()
 
-    for item in watchlist:
+    if not existing.data:
+        print("❌ Product not found in watchlist")
+        return
 
-        if item["product"] == product_name:
-            item["last_best_price"] = price
-            item["last_best_store"] = store
-            item["last_best_offer_id"] = offer_id
-            updated = True
+    old_price = existing.data[0].get("last_best_price", 0)
 
-    if updated:
-        save_watchlist(watchlist)
+    # 🚨 PRICE DROP CHECK
+    if price < old_price:
+        print(f"🔥 PRICE DROP ALERT for {product_name}!")
+        print(f"Old: ₹{old_price} → New: ₹{price}")
+
+    # ✅ Update record
+    supabase.table("watchlist") \
+        .update({
+            "last_best_price": price,
+            "last_best_store": store,
+            "last_best_offer_id": offer_id
+        }) \
+        .eq("user_id", user_id) \
+        .eq("product", product_name) \
+        .execute()
+
+    print(f"🔄 Updated price for {product_name}")

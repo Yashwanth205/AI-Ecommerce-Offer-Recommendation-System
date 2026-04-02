@@ -1,41 +1,64 @@
-import sqlite3
-from werkzeug.security import generate_password_hash, check_password_hash
+from supabase import create_client
+import os
 
-DB = "../database/users.db"
+# -------------------------------
+# Supabase Config
+# -------------------------------
+SUPABASE_URL = "https://foxqakvkvtrqlxgmymwc.supabase.co"
+SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhzeWl3aHVrc21uemtwZmV6dnhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMTEyNTMsImV4cCI6MjA4OTg4NzI1M30.A7XOs-uKHJoH4sLMYjXEJ-AB361JBZHYbfm4DfXllSI"   
 
-def create_user_table():
-    conn = sqlite3.connect(DB)
-    cur = conn.cursor()
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-    cur.execute("""
-    CREATE TABLE IF NOT EXISTS users(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        email TEXT UNIQUE,
-        password TEXT
-    )
-    """)
 
-    conn.commit()
-    conn.close()
-
+# -------------------------------
+# Register User
+# -------------------------------
 def register_user(email, password):
-    conn = sqlite3.connect(DB)
-    cur = conn.cursor()
+    try:
+        res = supabase.auth.sign_up({
+            "email": email,
+            "password": password
+        })
 
-    hashed = generate_password_hash(password)
+        return res
 
-    cur.execute("INSERT INTO users(email,password) VALUES(?,?)",(email,hashed))
-    conn.commit()
-    conn.close()
+    except Exception as e:
+        print("Register Error:", e)
+        return None
 
-def validate_user(email,password):
-    conn = sqlite3.connect(DB)
-    cur = conn.cursor()
 
-    cur.execute("SELECT password FROM users WHERE email=?",(email,))
-    row = cur.fetchone()
-    conn.close()
+# -------------------------------
+# Validate Login
+# -------------------------------
+def validate_user(email, password):
+    try:
+        res = supabase.auth.sign_in_with_password({
+            "email": email,
+            "password": password
+        })
 
-    if row and check_password_hash(row[0],password):
-        return True
-    return False
+        if res.user:
+            return True
+
+        return False
+
+    except Exception as e:
+        print("Login Error:", e)
+        return False
+
+
+# -------------------------------
+# (Optional) Get User Info
+# -------------------------------
+def get_user(email):
+    try:
+        res = supabase.auth.admin.list_users()
+
+        for user in res:
+            if user.email == email:
+                return user
+
+    except Exception as e:
+        print("Get User Error:", e)
+
+    return None

@@ -112,6 +112,7 @@ select.form-select {
     transform: scale(1.05);
     box-shadow: 0 15px 30px rgba(0,0,0,0.2);
 }
+
 .nav-link {
     transition: 0.3s;
 }
@@ -120,6 +121,7 @@ select.form-select {
     transform: translateY(-2px);
     opacity: 0.8;
 }
+
 .custom-alert {
     position: fixed;
     top: 0;
@@ -223,7 +225,6 @@ select.form-select {
 
     <p class="text-muted mt-2">🔥 Trending: iPhone, Laptop, Sofa</p>
 
-    <!-- BEFORE SEARCH -->
     {% if not offers %}
 
     <!-- CATEGORY -->
@@ -264,20 +265,19 @@ select.form-select {
 
     {% endif %}
 
-    <!-- AFTER SEARCH -->
-    {% if offers %}
+    {% if offers is not none %}
 
     {% if best %}
     <div class="best-card mt-5">
         <h2 class="fw-bold text-dark">🏆 Best Deal Recommended</h2>
-        <h3 class="mt-3">{{ best.name }}</h3>
+        <h3 class="mt-3">{{ best.name if best.name and best.name != "Unknown Product" else request.form.get('product') }}</h3>
 
-        <p class="old-price">₹ {{ best.price }}</p>
-        <p class="price">You Pay: ₹ {{ best.final_price }}</p>
+        <p class="old-price">₹ {{ best.price or 0 }}</p>
+        <p class="price">You Pay: ₹ {{ best.final_price or 0 }}</p>
 
-        <p><b>Discount:</b> {{ best.discount }}%</p>
-        <p><b>Rating:</b> ⭐ {{ best.rating }}</p>
-        <span class="badge bg-success store-badge">{{ best.store }}</span>
+        <p><b>Discount:</b> {{ best.discount or 0 }}%</p>
+        <p><b>Rating:</b> ⭐ {{ best.rating if best.rating and best.rating > 0 else "N/A" }}</p>
+        <span class="badge bg-success store-badge">{{ best.store or "Store" }}</span>
     </div>
     {% endif %}
 
@@ -294,15 +294,15 @@ select.form-select {
         <div class="col-md-4 mb-4">
             <div class="card offer-card p-3">
 
-                <h5>#{{ item.rank }} - {{ item.name }}</h5>
+                <h5>#{{ item.rank }} - {{ item.name or "Product" }}</h5>
 
-                <p class="old-price">₹ {{ item.price }}</p>
-                <p class="price">₹ {{ item.final_price }}</p>
+                <p class="old-price">₹ {{ item.price or 0 }}</p>
+                <p class="price">₹ {{ item.final_price if item.final_price else (item.price - (item.price * item.discount / 100) - (item.offer or 0)) }}</p>
 
-                <p class="text-warning">Discount: {{ item.discount }}%</p>
-                <p>⭐ {{ item.rating }}</p>
+                <p class="text-warning">Discount: {{ item.discount or 0 }}%</p>
+                <p>⭐ {{ item.rating if item.rating and item.rating > 0 else "N/A" }}</p>
 
-                <span class="badge bg-secondary">{{ item.store }}</span>
+                <span class="badge bg-secondary">{{ item.store or "Store" }}</span>
 
             </div>
         </div>
@@ -310,90 +310,76 @@ select.form-select {
         {% endfor %}
     </div>
 
-    <!-- WHY DEALAI AT BOTTOM -->
-    <div class="container mt-5">
-        <h4 class="text-start mb-3">🤖 Why DealAI?</h4>
-        <div class="row text-center">
-            <div class="col-md-4">
-                <div class="card p-4 shadow-sm feature-card">
-                    ⚡ Fast Price Comparison
-                    <p class="text-muted">Compare multiple stores instantly</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card p-4 shadow-sm feature-card">
-                    🧠 AI Recommendation
-                    <p class="text-muted">Smart suggestions based on value</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card p-4 shadow-sm feature-card">
-                    🔔 Deal Alerts
-                    <p class="text-muted">Get notified on price drops</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
     {% endif %}
 
 </div>
 <script>
-    let lastAlertTimestamp = localStorage.getItem("lastAlertTimestamp");
-    let params = new URLSearchParams(window.location.search);
-    let currentProduct = params.get("product") ? params.get("product").toLowerCase() : null;
-    
-    let redirectProduct = null;
+function showToast(msg) {
+    const toast = document.getElementById("customToast");
+    const message = document.getElementById("toastMessage");
 
-async function checkAlerts() {
-    const res = await fetch("/alerts");
-    const data = await res.json();
+    message.innerText = msg;
+    toast.style.display = "block";
 
-    if (data.alerts && data.alerts.length > 0) {
-        const latest = data.alerts[data.alerts.length - 1];
-
-        // store product for redirect
-        redirectProduct = latest.product.toLowerCase();
-
-        document.getElementById("alertMessage").innerText =
-            `Price ${latest.type.toUpperCase()}!\n` +
-            `${latest.product}\n₹${latest.old_price} → ₹${latest.new_price}` +
-            (currentProduct !== latest.product ? "\n\n(Background update)" : "");
-
-        document.getElementById("customAlert").style.display = "flex";
-    }
-}
-
-
-function closeAlert() {
-    document.getElementById("customAlert").style.display = "none";
-
-    // clear alerts
-    fetch("/clear-alerts", { method: "POST" });
-
-    // 🔥 FORCE RELOAD (guaranteed)
     setTimeout(() => {
-        window.location.reload();
-    }, 300);
+        toast.style.display = "none";
+    }, 4000);
+}
+    async function checkAlerts() {
+        try {
+            let res = await fetch("/alerts");
+            let data = await res.json();
+    
+            console.log("ALERT DATA:", data); // 🔍 debug
+    
+            if (data.alerts && data.alerts.length > 0) {
+
+let alertData = data.alerts[0];
+if (!alertData) return;
+
+let message = "";
+
+if (alertData.type === "drop") {
+    message = `🔻 Price dropped for ${alertData.product}!\n₹${alertData.old_price} → ₹${alertData.new_price}`;
+} else if (alertData.type === "increase") {
+    message = `🔺 Price increased for ${alertData.product}`;
+} else {
+    message = `🔄 Store changed for ${alertData.product}`;
 }
 
-setInterval(checkAlerts, 10000);
+showToast(message);
 
-setInterval(checkAlerts, 10000);
+await fetch("/clear-alerts", { method: "POST" });
 
-setInterval(checkAlerts, 10000);
+setTimeout(() => {
+    window.location.href = "/?product=" + alertData.product;
+}, 4000);
+}
     
-    // run immediately + every 8 sec
-    checkAlerts();
-    setInterval(checkAlerts, 8000);
+        } catch (e) {
+            console.log("Alert fetch error", e);
+        }
+    }
+    
+    // check every 5 sec
+    setInterval(checkAlerts, 5000);
     </script>
-<!-- CUSTOM ALERT MODAL -->
-<div id="customAlert" class="custom-alert">
-    <div class="alert-box">
-        <h4>🔔 Deal Alert</h4>
-        <p id="alertMessage"></p>
-        <button onclick="closeAlert()">OK</button>
-    </div>
+<div id="customToast" 
+style="
+   position: fixed;
+   top: 20px;
+   right: 20px;
+   min-width: 280px;
+   background: #111827;
+   color: white;
+   padding: 15px 20px;
+   border-radius: 12px;
+   box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+   display: none;
+   z-index: 9999;
+   font-weight: 500;
+">
+<span id="toastMessage"></span>
 </div>
 
 </body>

@@ -26,4 +26,3 @@ def create_app():
 
         return render_template("products.html", products=products)
     return app
-

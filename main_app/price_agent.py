@@ -1,227 +1,177 @@
 import time
-import json
 import schedule
-import sqlite3
-import os
 
 from main_app.emailer import send_price_alert
 from main_app.fetcher import fetch_all_offers
 from main_app.scorer import rank_offers
 
-# ✅ SUPABASE IMPORT
 from supabase import create_client
 
-# ✅ SUPABASE CONFIG
-url = "https://hsyiwhuksmnzkpfezvxn.supabase.co"
-key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhzeWl3aHVrc21uemtwZmV6dnhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMTEyNTMsImV4cCI6MjA4OTg4NzI1M30.A7XOs-uKHJoH4sLMYjXEJ-AB361JBZHYbfm4DfXllSI"
-supabase = create_client(url, key)
+# ✅ SUPABASE
+SUPABASE_URL = "https://hsyiwhuksmnzkpfezvxn.supabase.co"
+SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhzeWl3aHVrc21uemtwZmV6dnhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMTEyNTMsImV4cCI6MjA4OTg4NzI1M30.A7XOs-uKHJoH4sLMYjXEJ-AB361JBZHYbfm4DfXllSI"
 
-
-# ---------- SAFE PATHS ----------
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-WATCHLIST_PATH = os.path.join(BASE_DIR, "../database/watchlist.json")
-ALERTS_PATH = os.path.join(BASE_DIR, "../database/alerts.json")
-USERS_DB_PATH = os.path.join(BASE_DIR, "../database/users.db")
-
-
-# ---------------- LOAD WATCHLIST ----------------
-def load_watchlist():
-    try:
-        with open(WATCHLIST_PATH, "r") as f:
-            return json.load(f)
-    except:
-        return []
-
-
-# ---------------- SAVE WATCHLIST ----------------
-def save_watchlist(data):
-    with open(WATCHLIST_PATH, "w") as f:
-        json.dump(data, f, indent=4)
-
-
-# ---------------- SAVE ALERT ----------------
-def save_alert(product, store, old_price, new_price, alert_type):
-
-    try:
-        with open(ALERTS_PATH, "r") as f:
-            alerts = json.load(f)
-    except:
-        alerts = []
-
-    alerts.append({
-        "product": product,
-        "store": store,
-        "old_price": old_price,
-        "new_price": new_price,
-        "type": alert_type,
-        "timestamp": time.time()
-    })
-
-    with open(ALERTS_PATH, "w") as f:
-        json.dump(alerts, f, indent=4)
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+print("✅ Supabase initialized")
 
 
 # ---------------- GET USER EMAIL ----------------
 def get_user_email(user_id):
     try:
-        conn = sqlite3.connect(USERS_DB_PATH)
-        cur = conn.cursor()
-
-        cur.execute("SELECT email FROM users WHERE id=?", (user_id,))
-        user = cur.fetchone()
-
-        conn.close()
-
-        if user:
-            return user[0]
-
+        res = supabase.table("users").select("email").eq("id", user_id).execute()
+        if res.data:
+            return res.data[0]["email"]
     except Exception as e:
         print("Email fetch error:", e)
 
     return None
 
 
-# ---------------- SEND EMAIL ALERT ----------------
+# ---------------- SEND EMAIL ----------------
 def notify_user(user_id, product, store, old_price, new_price, alert_type):
 
     email = get_user_email(user_id)
 
     if not email:
-        print("No email found for user:", user_id)
+        print("❌ No email found")
         return
 
     try:
-        send_price_alert(
-            email,
-            product,
-            store,
-            old_price,
-            new_price
-        )
-
+        send_price_alert(email, product, store, old_price, new_price)
         print(f"📧 Alert sent to {email}")
-
     except Exception as e:
-        print("Email sending error:", e)
+        print("Email error:", e)
 
 
-# ---------------- MAIN AGENT LOGIC ----------------
+# ---------------- MAIN AGENT ----------------
 def check_prices():
 
-    watchlist = load_watchlist()
+    try:
+        # ✅ SAFE FETCH
+        try:
+            res = supabase.table("watchlist").select("*").execute()
+            print("📦 Supabase data:", res.data)
+        except Exception as e:
+            print("❌ Supabase connection error:", e)
+            return
+        watchlist = res.data or []
 
-    if not watchlist:
-        print("No products in watchlist")
-        return
+        if not watchlist:
+            print("No products in watchlist")
+            return
 
-    print("\n🤖 Agent checking prices...")
+        print("\n🤖 Checking prices...")
 
-    updated = False
+        for item in watchlist:
 
-    for item in watchlist:
+            try:
+                user_id = item.get("user_id")
+                product = str(item.get("product") or "").strip()
+                if not product:
+                     print("⚠️ Skipping empty product")
+                     continue
 
-        if "user_id" not in item:
-            continue
+                if not user_id or not product:
+                    continue
 
-        user_id = item["user_id"]
-        product = item["product"]
+                offers = fetch_all_offers(product)
 
-        offers = fetch_all_offers(product)
-        if not offers:
-            continue
+                if not offers:
+                    print("⚠️ No offers for:", product)
+                    continue
 
-        ranked_offers, best_offer = rank_offers(offers)
+                ranked_offers, best_offer = rank_offers(offers)
 
-        if not best_offer:
-            continue
+                if not best_offer:
+                    continue
 
-        current_price = best_offer["final_price"]
-        current_store = best_offer["store"]
-        current_offer_id = best_offer["offer_id"]
+                current_price = best_offer.get("final_price", 0)
+                current_store = best_offer.get("store", "Unknown")
+                current_offer_id = best_offer.get("offer_id", "")
 
-        # ---------- FIRST TIME MEMORY ----------
-        if item.get("last_best_price") is None:
-            item["last_best_price"] = current_price
-            item["last_best_store"] = current_store
-            item["last_best_offer_id"] = current_offer_id
-            updated = True
-            continue
+                old_price = item.get("last_best_price", 0)
+                old_store = item.get("last_best_store", "")
 
-        old_price = item["last_best_price"]
-        old_store = item.get("last_best_store")
+                print(f"👉 {product}: ₹{current_price}")
 
-        # ---------- PRICE DROP ----------
-        if current_price < old_price:
+                # ---------- PRICE DROP ----------
+                if old_price and current_price < old_price:
 
-            print("\n🔻 PRICE DROP DETECTED")
-            print(product, old_price, "→", current_price)
+                    print("🔻 PRICE DROP")
 
-            save_alert(product, current_store, old_price, current_price, "drop")
-            notify_user(user_id, product, current_store, old_price, current_price, "drop")
+                    try:
+                        notify_user(user_id, product, current_store, old_price, current_price, "drop")
+                    except Exception as e:
+                        print("Notify error:", e)
 
-            # ✅ SUPABASE INSERT
-            supabase.table("alerts").insert({
-                "user_id": user_id,
-                "product": product,
-                "old_price": old_price,
-                "new_price": current_price,
-                "type": "drop"
-            }).execute()
+                    supabase.table("alerts").insert({
+                        "user_id": user_id,
+                        "product": product,
+                        "old_price": old_price,
+                        "new_price": current_price,
+                        "type": "drop"
+                    }).execute()
 
-        # ---------- PRICE INCREASE ----------
-        elif current_price > old_price:
+                # ---------- PRICE INCREASE ----------
+                elif old_price and current_price > old_price:
 
-            print("\n🔺 PRICE INCREASE DETECTED")
-            print(product, old_price, "→", current_price)
+                    print("🔺 PRICE INCREASE")
 
-            save_alert(product, current_store, old_price, current_price, "increase")
-            notify_user(user_id, product, current_store, old_price, current_price, "increase")
+                    try:
+                        notify_user(user_id, product, current_store, old_price, current_price, "increase")
+                    except Exception as e:
+                        print("Notify error:", e)
 
-            # ✅ SUPABASE INSERT
-            supabase.table("alerts").insert({
-                "user_id": user_id,
-                "product": product,
-                "old_price": old_price,
-                "new_price": current_price,
-                "type": "increase"
-            }).execute()
+                    supabase.table("alerts").insert({
+                        "user_id": user_id,
+                        "product": product,
+                        "old_price": old_price,
+                        "new_price": current_price,
+                        "type": "increase"
+                    }).execute()
 
-        # ---------- STORE CHANGE ----------
-        if current_store != old_store:
+                # ---------- STORE CHANGE ----------
+                if old_store and current_store != old_store:
 
-            print("\n🔄 BETTER STORE FOUND")
-            print(old_store, "→", current_store)
+                    print("🔄 STORE CHANGE")
 
-            save_alert(product, current_store, old_price, current_price, "store_change")
-            notify_user(user_id, product, current_store, old_price, current_price, "store_change")
+                    try:
+                        notify_user(user_id, product, current_store, old_price, current_price, "store_change")
+                    except Exception as e:
+                        print("Notify error:", e)
 
-            # ✅ SUPABASE INSERT
-            supabase.table("alerts").insert({
-                "user_id": user_id,
-                "product": product,
-                "old_price": old_price,
-                "new_price": current_price,
-                "type": "store_change"
-            }).execute()
+                    supabase.table("alerts").insert({
+                        "user_id": user_id,
+                        "product": product,
+                        "old_price": old_price,
+                        "new_price": current_price,
+                        "type": "store_change"
+                    }).execute()
 
-        # ---------- UPDATE MEMORY ----------
-        if current_price != old_price or current_store != old_store:
-            item["last_best_price"] = current_price
-            item["last_best_store"] = current_store
-            item["last_best_offer_id"] = current_offer_id
-            updated = True
+                # ---------- UPDATE SUPABASE ----------
+                supabase.table("watchlist") \
+                    .update({
+                        "last_best_price": current_price,
+                        "last_best_store": current_store,
+                        "last_best_offer_id": current_offer_id
+                    }) \
+                    .eq("id", item["id"]) \
+                    .execute()
 
-    if updated:
-        save_watchlist(watchlist)
+            except Exception as e:
+                print("Error processing item:", e)
+
+    except Exception as e:
+        print("❌ check_prices error:", e)
 
 
 # run every 10 seconds
-schedule.every(10).seconds.do(check_prices)
+schedule.every(30).seconds.do(check_prices)
 
 
-# ---------------- AGENT RUNNER ----------------
+# ---------------- RUN ----------------
 def run_agent():
-    print("🧠 Price Monitoring Agent Started...")
+    print("🧠 Agent started...")
     while True:
         schedule.run_pending()
         time.sleep(2)

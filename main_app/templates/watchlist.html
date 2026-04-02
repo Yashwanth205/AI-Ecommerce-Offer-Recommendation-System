@@ -12,7 +12,6 @@
             font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        /* 🔥 NAVBAR */
         .navbar{
             background: linear-gradient(90deg,#020617,#1e293b);
         }
@@ -22,7 +21,6 @@
             font-weight:700;
         }
 
-        /* 🔥 CARD */
         .watch-card{
             background:white;
             border-radius:18px;
@@ -60,7 +58,6 @@
             margin-bottom:15px;
         }
 
-        /* 🔥 BUTTONS */
         .btn-primary{
             background: linear-gradient(135deg,#2563eb,#3b82f6);
             border:none;
@@ -70,10 +67,6 @@
 
         .btn-primary:hover{
             transform:scale(1.05);
-        }
-
-        .btn-outline-danger{
-            transition:0.3s;
         }
 
         .btn-outline-danger:hover{
@@ -88,46 +81,35 @@
             text-align:center;
             box-shadow:0 15px 35px rgba(0,0,0,0.25);
         }
-        .nav-link {
-    transition: 0.3s;
-}
 
-.nav-link:hover {
-    transform: translateY(-2px);
-    opacity: 0.8;
-}
-
+        .nav-link:hover {
+            transform: translateY(-2px);
+            opacity: 0.8;
+        }
     </style>
 </head>
 
 <body>
 
-<!-- 🔥 NAVBAR (ADDED) -->
+<!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg navbar-dark shadow-sm">
     <div class="container">
-
         <a class="navbar-brand fw-bold" href="/">🤖 DealAI</a>
 
         <ul class="navbar-nav ms-auto align-items-center">
-
             <li class="nav-item mx-2">
                 <a class="nav-link text-white" href="/">Home</a>
             </li>
-        
             <li class="nav-item mx-2">
                 <a class="nav-link text-white" href="/watchlist">Watchlist</a>
             </li>
-        
             <li class="nav-item mx-2">
                 <a class="nav-link text-warning fw-semibold" href="/account">👤 Account</a>
             </li>
-        
             <li class="nav-item mx-2">
                 <a class="nav-link text-danger fw-semibold" href="/logout">Logout</a>
             </li>
-        
         </ul>
-
     </div>
 </nav>
 
@@ -135,42 +117,39 @@
 
     <h2 class="text-center page-title mb-4">🔔 Your AI Watchlist</h2>
 
-    {% if watchlist and watchlist|length > 0 %}
+    {% if items is defined and items and items|length > 0 %}
 
     <div class="row">
 
-        {% for product in watchlist %}
+        {% for product in items %}
         <div class="col-md-4 mb-4">
 
             <div class="watch-card">
 
-                <!-- PRODUCT NAME -->
                 <div class="product-name">
-                    📦 {{ product.product | capitalize }}
+                    📦 {{ product.product | default("Unknown") | capitalize }}
                 </div>
 
-                <!-- LAST BEST PRICE -->
-                {% if product.last_best_price %}
-<div class="price-box">
-    💰 Last Best Price: <b>₹{{ product.last_best_price }}</b><br>
-    🏬 Store: {{ product.last_best_store }}
-</div>
-{% else %}
-<a href="/?product={{ product.product }}" class="btn btn-warning w-100 mb-2">
-    🔎 Fetch Best Price
-</a>
-{% endif %}
-                <!-- MONITORING -->
+                {% if product.last_best_price is not none and product.last_best_price != 0 %}
+                <div class="price-box">
+                    💰 Last Best Price: <b>₹{{ product.last_best_price }}</b><br>
+                    🏬 Store: {{ product.last_best_store | default("N/A") }}
+                </div>
+                {% else %}
+                <a href="/?product={{ product.product | urlencode }}" class="btn btn-warning w-100 mb-2">
+                    🔎 Fetch Best Price
+                </a>
+                {% endif %}
+
                 <div class="monitor-box">
-                    🤖 DealAI is monitoring this product for price changes across stores.
+                    🤖 DealAI is monitoring this product for price changes.
                 </div>
 
-                <!-- BUTTONS -->
-                <a href="/?product={{ product.product }}" class="btn btn-primary w-100 mb-2">
+                <a href="/?product={{ product.product | urlencode }}" class="btn btn-primary w-100 mb-2">
                     🔎 Check Best Deal
                 </a>
 
-                <a href="{{ url_for('remove_watch', product_name=product.product) }}" 
+                <a href="/remove/{{ product.product }}" 
                    class="btn btn-outline-danger w-100">
                     ❌ Remove
                 </a>
@@ -195,6 +174,43 @@
     {% endif %}
 
 </div>
+<script>
+    async function checkAlerts() {
+        try {
+            let res = await fetch("/alerts");
+            let data = await res.json();
+    
+            if (data.alerts && data.alerts.length > 0) {
+    
+                let alertData = data.alerts[0];
+    
+                let message = "";
+    
+                if (alertData.type === "drop") {
+                    message = `🔻 Price dropped for ${alertData.product}!\n₹${alertData.old_price} → ₹${alertData.new_price}`;
+                } else if (alertData.type === "increase") {
+                    message = `🔺 Price increased for ${alertData.product}`;
+                } else {
+                    message = `🔄 Store changed for ${alertData.product}`;
+                }
+    
+                alert(message);
+    
+                // clear alerts
+                await fetch("/clear-alerts", { method: "POST" });
+    
+                // 🔥 AUTO RELOAD
+                window.location.href = "/watchlist";
+            }
+    
+        } catch (e) {
+            console.log("Alert fetch error");
+        }
+    }
+    
+    // check every 10 sec
+    setInterval(checkAlerts, 10000);
+    </script>
 
 </body>
 </html>

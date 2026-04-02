@@ -4,7 +4,7 @@
         "product": "iphone",
         "last_best_price": 27000.0,
         "last_best_store": "EcomSite2",
-        "last_best_offer_id": "5064b4e2-1be8-4609-a6d6-96d528df8346"
+        "last_best_offer_id": "d101d730-183c-487e-99d7-b4ba0b1585e8"
     },
     {
         "user_id": 3,
@@ -19,5 +19,12 @@
         "last_best_price": 85.0,
         "last_best_store": "EcomSite1",
         "last_best_offer_id": "feb54edf-1932-4305-80d0-acd35afebd3e"
+    },
+    {
+        "user_id": 1,
+        "product": "laptop",
+        "last_best_price": 51000.0,
+        "last_best_store": "EcomSite1",
+        "last_best_offer_id": "4671fae5-ac46-443f-a3c7-968c0d767666"
     }
 ]
