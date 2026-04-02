@@ -1,10 +1,11 @@
-from flask import session
+import os
 from supabase import create_client
+from flask import session
 
-# ---------------- SUPABASE ----------------
-url = "https://hsyiwhuksmnzkpfezvxn.supabase.co"
-key = "YOUR_ANON_KEY"
-supabase = create_client(url, key)
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 
 # -----------------------------
