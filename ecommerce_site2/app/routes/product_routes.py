@@ -21,15 +21,19 @@ def view_products():
 @product_bp.route("/add", methods=["GET", "POST"])
 def add_product_route():
     if request.method == "POST":
-        name = request.form["name"]
-        price = float(request.form["price"])
-        discount = int(request.form.get("discount", 0))
-        availability = request.form["availability"]
-        rating = float(request.form.get("rating", 0))
+        try:
+            name = request.form.get("name", "")
+            price = float(request.form.get("price") or 0)
+            discount = int(request.form.get("discount") or 0)
+            availability = request.form.get("availability", "In Stock")
+            rating = float(request.form.get("rating") or 0)
 
-        add_product(name, price, discount, availability, rating)
+            add_product(name, price, discount, availability, rating)
 
-        return redirect(url_for("products.view_products"))
+            return redirect(url_for("products.view_products"))
+
+        except Exception as e:
+            return f"Error occurred: {e}"
 
     return render_template("add_product.html")
 
