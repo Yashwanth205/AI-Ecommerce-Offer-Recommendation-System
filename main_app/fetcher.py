@@ -56,8 +56,8 @@ def fetch_all_offers(product_name):
 
     offers = []
 
-    SITE1_URL = "http://127.0.0.1:5010/api/search"
-    SITE2_URL = "http://127.0.0.1:5020/api/search"
+    SITE1_URL = "https://ecommerce1-8ycx.onrender.com"
+    SITE2_URL = "https://ecommerce-v0n8.onrender.com"
 
     # ----------- Ecommerce Site 1 -----------
     try:
