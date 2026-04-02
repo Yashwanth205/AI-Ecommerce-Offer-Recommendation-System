@@ -48,8 +48,10 @@ def get_alerts():
     return {"alerts": response.data}
 @app.route("/run-agent")
 def run_agent_route():
+    print("🔥 AGENT STARTED")
     run_agent()
-    return "✅ Agent executed"
+    print("✅ AGENT FINISHED")
+    return "Agent executed"
 # ---------------------------------------------------
 # CLEAR ALERTS
 # ---------------------------------------------------
@@ -299,6 +301,11 @@ def home():
                 ]
 
             ranked_offers, best_offer = rank_offers(offers)
+            if not best_offer:
+                return render_template("index.html",
+                           offers=[],
+                           best=None,
+                           explanation="No valid offers found.")
 
             # ---------------- ADD TO WATCHLIST ----------------
             if "user_id" in session:

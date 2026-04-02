@@ -8,8 +8,10 @@ from main_app.scorer import rank_offers
 from supabase import create_client
 
 # ✅ SUPABASE
-SUPABASE_URL = "https://hsyiwhuksmnzkpfezvxn.supabase.co"
-SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhzeWl3aHVrc21uemtwZmV6dnhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMTEyNTMsImV4cCI6MjA4OTg4NzI1M30.A7XOs-uKHJoH4sLMYjXEJ-AB361JBZHYbfm4DfXllSI"
+import os
+
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 print("✅ Supabase initialized")
@@ -47,47 +49,46 @@ def notify_user(user_id, product, store, old_price, new_price, alert_type):
 def check_prices():
 
     try:
-        # ✅ SAFE FETCH
+        # 🔹 Fetch watchlist
         try:
             res = supabase.table("watchlist").select("*").execute()
-            print("📦 Supabase data:", res.data)
+            watchlist = res.data or []
+            print("📦 Watchlist:", watchlist)
         except Exception as e:
-            print("❌ Supabase connection error:", e)
+            print("❌ Supabase error:", e)
             return
-        watchlist = res.data or []
 
         if not watchlist:
-            print("No products in watchlist")
+            print("⚠️ No products in watchlist")
             return
 
-        print("\n🤖 Checking prices...")
+        print("\n🤖 Checking prices...\n")
 
         for item in watchlist:
 
             try:
                 user_id = item.get("user_id")
                 product = str(item.get("product") or "").strip()
-                if not product:
-                     print("⚠️ Skipping empty product")
-                     continue
 
                 if not user_id or not product:
+                    print("⚠️ Invalid watchlist item")
                     continue
 
+                # 🔹 Fetch offers
                 offers = fetch_all_offers(product)
 
                 if not offers:
                     print("⚠️ No offers for:", product)
                     continue
 
+                # 🔹 Rank offers
                 ranked_offers, best_offer = rank_offers(offers)
 
                 if not best_offer:
                     continue
 
-                price = best_offer.get("price", 0)
-                discount = best_offer.get("discount", 0)
-                current_price = price - (price * discount / 100)
+                # 🔥 USE final_price (IMPORTANT)
+                current_price = best_offer.get("final_price", 0)
                 current_store = best_offer.get("store", "Unknown")
                 current_offer_id = best_offer.get("offer_id", "")
 
@@ -96,15 +97,15 @@ def check_prices():
 
                 print(f"👉 {product}: ₹{current_price}")
 
-                # ---------- PRICE DROP ----------
-                if not old_price or current_price < old_price:
+                # ---------------- FIRST TIME ----------------
+                if not old_price:
+                    print("🆕 First time tracking")
 
+                # ---------------- PRICE DROP ----------------
+                elif current_price < old_price:
                     print("🔻 PRICE DROP")
 
-                    try:
-                        notify_user(user_id, product, current_store, old_price, current_price, "drop")
-                    except Exception as e:
-                        print("Notify error:", e)
+                    notify_user(user_id, product, current_store, old_price, current_price, "drop")
 
                     supabase.table("alerts").insert({
                         "user_id": user_id,
@@ -114,15 +115,11 @@ def check_prices():
                         "type": "drop"
                     }).execute()
 
-                # ---------- PRICE INCREASE ----------
-                elif old_price and current_price > old_price:
-
+                # ---------------- PRICE INCREASE ----------------
+                elif current_price > old_price:
                     print("🔺 PRICE INCREASE")
 
-                    try:
-                        notify_user(user_id, product, current_store, old_price, current_price, "increase")
-                    except Exception as e:
-                        print("Notify error:", e)
+                    notify_user(user_id, product, current_store, old_price, current_price, "increase")
 
                     supabase.table("alerts").insert({
                         "user_id": user_id,
@@ -132,15 +129,11 @@ def check_prices():
                         "type": "increase"
                     }).execute()
 
-                # ---------- STORE CHANGE ----------
+                # ---------------- STORE CHANGE ----------------
                 if old_store and current_store != old_store:
-
                     print("🔄 STORE CHANGE")
 
-                    try:
-                        notify_user(user_id, product, current_store, old_price, current_price, "store_change")
-                    except Exception as e:
-                        print("Notify error:", e)
+                    notify_user(user_id, product, current_store, old_price, current_price, "store_change")
 
                     supabase.table("alerts").insert({
                         "user_id": user_id,
@@ -150,7 +143,7 @@ def check_prices():
                         "type": "store_change"
                     }).execute()
 
-                # ---------- UPDATE SUPABASE ----------
+                # ---------------- UPDATE WATCHLIST ----------------
                 supabase.table("watchlist") \
                     .update({
                         "last_best_price": current_price,
@@ -161,17 +154,17 @@ def check_prices():
                     .execute()
 
             except Exception as e:
-                print("Error processing item:", e)
+                print("❌ Error processing item:", e)
 
     except Exception as e:
         print("❌ check_prices error:", e)
 
 
-# run every 10 seconds
+# ---------------- SCHEDULER (OPTIONAL) ----------------
 schedule.every(30).seconds.do(check_prices)
 
 
-# ---------------- RUN ----------------
+# ---------------- RUN AGENT (FOR /run-agent ROUTE) ----------------
 def run_agent():
     print("🧠 Agent triggered manually...")
     check_prices()
