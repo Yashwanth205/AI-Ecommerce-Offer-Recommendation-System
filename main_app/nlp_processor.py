@@ -1,6 +1,7 @@
 import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
+nltk.download('stopwords')
 
 # load English stopwords
 stop_words = set(stopwords.words('english'))
