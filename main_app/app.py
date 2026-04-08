@@ -1,10 +1,18 @@
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for, flash
-from .scorer import rank_offers
-from .memory import add_to_watchlist, update_price
-from .price_agent import run_agent
-from .nlp_processor import process_query
-from .fetcher import fetch_all_offers
-from .ai_explainer import generate_explanation
+try:
+    from .scorer import rank_offers
+    from .memory import add_to_watchlist, update_price
+    from .price_agent import run_agent
+    from .nlp_processor import process_query
+    from .fetcher import fetch_all_offers
+    from .ai_explainer import generate_explanation
+except ImportError:
+    from scorer import rank_offers
+    from memory import add_to_watchlist, update_price
+    from price_agent import run_agent
+    from nlp_processor import process_query
+    from fetcher import fetch_all_offers
+    from ai_explainer import generate_explanation
 
 import threading
 import json

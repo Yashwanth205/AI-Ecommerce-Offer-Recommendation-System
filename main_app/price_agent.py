@@ -1,8 +1,13 @@
 import time
 import schedule
-from .emailer import send_price_alert
-from .fetcher import fetch_all_offers
-from .scorer import rank_offers
+try:
+    from .emailer import send_price_alert
+    from .fetcher import fetch_all_offers
+    from .scorer import rank_offers
+except ImportError:
+    from emailer import send_price_alert
+    from fetcher import fetch_all_offers
+    from scorer import rank_offers
 from supabase import create_client
 import os
 
