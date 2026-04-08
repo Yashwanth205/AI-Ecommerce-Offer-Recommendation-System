@@ -1,25 +1,16 @@
-import os
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
+# ---------------- GMAIL CONFIG ----------------
+EMAIL_ADDRESS = "madamanchiyashwanth0212@gmail.com"
+EMAIL_PASSWORD = "aujeorrstjejrkjn"
 
-# ---------------- GMAIL CONFIG (SAFE) ----------------
-EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS")
-EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
 
 
-# ---------------- SEND EMAIL ----------------
+
+# ---------------- SEND EMAIL TO SINGLE USER ----------------
 def send_price_alert(receiver_email, product, store, old_price, new_price):
-
-    # ❌ safety check
-    if not EMAIL_ADDRESS or not EMAIL_PASSWORD:
-        print("❌ Email credentials not set")
-        return
-
-    if not receiver_email:
-        print("❌ No receiver email")
-        return
 
     try:
         subject = f"🔥 DealAI Alert: Price change detected for {product}"
@@ -48,16 +39,17 @@ Happy Saving 💰
 
         msg.attach(MIMEText(body, "plain"))
 
-        # ---------------- SMTP ----------------
-        server = smtplib.SMTP("smtp.gmail.com", 587, timeout=10)
+        # Gmail SMTP
+        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server.ehlo()
         server.starttls()
+        server.ehlo()
 
         server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
         server.sendmail(EMAIL_ADDRESS, receiver_email, msg.as_string())
-
         server.quit()
 
-        print(f"📧 Email sent to {receiver_email}")
+        print("📧 Email successfully sent to:", receiver_email)
 
     except Exception as e:
         print("❌ Email sending failed:", e)

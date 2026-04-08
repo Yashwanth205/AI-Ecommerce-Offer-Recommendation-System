@@ -33,41 +33,16 @@ def inject_user():
 
 @app.route("/alerts")
 def get_alerts():
-
-    if "user_id" not in session:
-        return {"alerts": []}
-
-    user_id = session["user_id"]
-
-    response = supabase.table("alerts") \
-        .select("*") \
-        .eq("user_id", user_id) \
-        .order("id", desc=True) \
-        .execute()
-
+    response = supabase.table("alerts").select("*").execute()
     return {"alerts": response.data}
-@app.route("/run-agent")
-def run_agent_route():
-    print("🔥 AGENT STARTED")
-    run_agent()
-    print("✅ AGENT FINISHED")
-    return "Agent executed"
+
+
 # ---------------------------------------------------
 # CLEAR ALERTS
 # ---------------------------------------------------
 @app.route("/clear-alerts", methods=["POST"])
 def clear_alerts():
-
-    if "user_id" not in session:
-        return {"status": "no user"}
-
-    user_id = session["user_id"]
-
-    supabase.table("alerts") \
-        .delete() \
-        .eq("user_id", user_id) \
-        .execute()
-
+    supabase.table("alerts").delete().neq("id", 0).execute()
     return {"status": "cleared"}
 
 
@@ -78,33 +53,21 @@ def clear_alerts():
 def register():
 
     if request.method == "POST":
-        name = request.form.get("name")
+
         email = request.form.get("email")
-        phone = request.form.get("phone")
         password = request.form.get("password")
-        confirm_password = request.form.get("confirm_password")
-
-        # ✅ Validation
-        if password != confirm_password:
-            return render_template("register.html", error="Passwords do not match!")
-
-        if len(password) < 6:
-            return render_template("register.html", error="Password must be at least 6 characters!")
 
         try:
-            # ✅ Insert into Supabase
             supabase.table("users").insert({
-                "name": name,
                 "email": email,
-                "phone": phone,
                 "password": password
             }).execute()
 
-            return render_template("register.html", success="Account created successfully!")
+            return redirect(url_for("login"))
 
         except Exception as e:
-            print("REGISTER ERROR:", e)
-            return render_template("register.html", error="Registration failed!")
+            print("Register error:", e)
+            return render_template("register.html", error="User already exists")
 
     return render_template("register.html")
 
@@ -155,18 +118,15 @@ def login():
 def account():
 
     if "user_id" not in session:
-        return redirect("/login")
+        return redirect(url_for("login"))
 
-    user_id = session["user_id"]
+    return render_template(
+        "account.html",
+        username=session.get("username"),
+        email=session.get("email"),
+        phone=session.get("phone")
+    )
 
-    res = supabase.table("users") \
-        .select("*") \
-        .eq("id", user_id) \
-        .execute()
-
-    user = res.data[0] if res.data else {}
-
-    return render_template("account.html", user=user)
 
 # ---------------------------------------------------
 # LOGOUT
@@ -180,36 +140,6 @@ def logout():
 # ---------------------------------------------------
 # WATCHLIST PAGE
 # ---------------------------------------------------
-@app.route("/add_to_watchlist", methods=["POST"])
-def add_to_watchlist():
-
-    try:
-        if "user_id" not in session:
-            return redirect("/login")
-
-        user_id = session["user_id"]
-        product = request.form.get("product")
-
-        print("ADDING:", product, user_id)  # DEBUG
-
-        if not product:
-            return "Product is empty"
-
-        res = supabase.table("watchlist").insert({
-            "user_id": user_id,
-            "product": product
-        }).execute()
-
-        print("INSERT RESULT:", res.data)
-
-        return redirect("/watchlist")
-
-    except Exception as e:
-        import traceback
-        traceback.print_exc()
-        return str(e)
-    
-
 @app.route("/watchlist")
 def watchlist():
 
@@ -228,9 +158,7 @@ def watchlist():
 
         print("WATCHLIST DATA:", items)  # DEBUG
 
-        return render_template("watchlist.html", items=items), 200, {
-    "Cache-Control": "no-store"
-}
+        return render_template("watchlist.html", items=items)
 
     except Exception as e:
         import traceback
@@ -287,7 +215,6 @@ def home():
 
             product = process_query(product)
 
-            # ---------------- FETCH OFFERS ----------------
             try:
                 offers = fetch_all_offers(product)
             except Exception as e:
@@ -301,60 +228,25 @@ def home():
                 ]
 
             ranked_offers, best_offer = rank_offers(offers)
-            if not best_offer:
-                return render_template("index.html",
-                           offers=[],
-                           best=None,
-                           explanation="No valid offers found.")
 
-            # ---------------- ADD TO WATCHLIST ----------------
+            # ✅ FIX 1: ADD TO WATCHLIST (correct usage)
             if "user_id" in session:
                 try:
-                    user_id = session["user_id"]
-
-                    print("ADDING TO WATCHLIST:", product, user_id)
-
-                    # ✅ CHECK DUPLICATE
-                    existing = supabase.table("watchlist") \
-                        .select("*") \
-                        .eq("user_id", user_id) \
-                        .eq("product", product) \
-                        .execute()
-
-                    if not existing.data:
-                        supabase.table("watchlist").insert({
-                            "user_id": user_id,
-                            "product": product,
-                            "last_best_price": best_offer.get("final_price", 0),
-                            "last_best_store": best_offer.get("store", ""),
-                            "last_best_offer_id": best_offer.get("offer_id", "")
-                        }).execute()
-
-                        print("✅ Added to watchlist")
-
-                    else:
-                        print("⚠️ Already exists in watchlist")
-
+                    add_to_watchlist(product)
                 except Exception as e:
-                    print("❌ Watchlist add error:", e)
+                    print("Watchlist add error:", e)
 
-            # ---------------- UPDATE PRICE ----------------
+            # ✅ FIX 2: UPDATE LATEST PRICE (VERY IMPORTANT)
             try:
-                if "user_id" in session:
-                    supabase.table("watchlist") \
-                        .update({
-                            "last_best_price": best_offer.get("final_price", 0),
-                            "last_best_store": best_offer.get("store", ""),
-                            "last_best_offer_id": best_offer.get("offer_id", "")
-                        }) \
-                        .eq("product", product) \
-                        .eq("user_id", session["user_id"]) \
-                        .execute()
-
+                update_price(
+                    product,
+                    best_offer["final_price"],
+                    best_offer["store"],
+                    best_offer["offer_id"]
+                )
             except Exception as e:
-                print("❌ Watchlist update error:", e)
+                print("Watchlist update error:", e)
 
-            # ---------------- AI EXPLANATION ----------------
             explanation = None
             try:
                 if len(ranked_offers) > 1:
