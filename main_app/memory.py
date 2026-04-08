@@ -1,6 +1,7 @@
 from flask import session
 from supabase import create_client
 import os
+import threading
 
 try:
     from .emailer import send_price_alert
@@ -10,6 +11,18 @@ except ImportError:
 url = os.environ.get("SUPABASE_URL")
 key = os.environ.get("SUPABASE_KEY")
 supabase = create_client(url, key)
+
+
+def _send_alert_email_async(user_email, product_name, store, old_price, price, alert_type):
+    def _task():
+        try:
+            sent = send_price_alert(user_email, product_name, store, old_price, price)
+            if sent:
+                print(f"📧 {alert_type} email sent to {user_email}")
+        except Exception as e:
+            print(f"❌ {alert_type} email failed for {user_email}:", e)
+
+    threading.Thread(target=_task, daemon=True).start()
 
 
 def add_to_watchlist(product_name, best_offer):
@@ -55,6 +68,8 @@ def update_price(product_name, price, store, offer_id):
 
     user_email = session.get("username")
 
+    alert_type = None
+
     # ✅ INSERT ALERT if price changed
     if old_price and price < old_price:
         supabase.table("alerts").insert({
@@ -65,13 +80,7 @@ def update_price(product_name, price, store, offer_id):
             "type": "drop"
         }).execute()
         print(f"🔥 PRICE DROP ALERT inserted for {product_name}")
-
-        if user_email:
-            try:
-                send_price_alert(user_email, product_name, store, old_price, price)
-                print(f"📧 Price drop email sent to {user_email}")
-            except Exception as e:
-                print(f"❌ Price drop email failed for {user_email}:", e)
+        alert_type = "drop"
 
     elif old_price and price > old_price:
         supabase.table("alerts").insert({
@@ -81,13 +90,7 @@ def update_price(product_name, price, store, offer_id):
             "new_price": price,
             "type": "increase"
         }).execute()
-
-        if user_email:
-            try:
-                send_price_alert(user_email, product_name, store, old_price, price)
-                print(f"📧 Price increase email sent to {user_email}")
-            except Exception as e:
-                print(f"❌ Price increase email failed for {user_email}:", e)
+        alert_type = "increase"
 
     supabase.table("watchlist").update({
         "last_best_price": price,
@@ -96,3 +99,7 @@ def update_price(product_name, price, store, offer_id):
     }).eq("user_id", user_id).eq("product", product_name).execute()
 
     print(f"🔄 Updated price for {product_name}")
+
+    # Send email outside critical path so request latency stays low on Render free instances.
+    if alert_type and user_email:
+        _send_alert_email_async(user_email, product_name, store, old_price, price, alert_type)
