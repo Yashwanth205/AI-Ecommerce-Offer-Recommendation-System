@@ -31,8 +31,11 @@ def notify_user(user_id, product, store, old_price, new_price, alert_type):
         print("❌ No email found")
         return
     try:
-        send_price_alert(email, product, store, old_price, new_price)
-        print(f"📧 Alert sent to {email}")
+        sent = send_price_alert(email, product, store, old_price, new_price)
+        if sent:
+            print(f"📧 Alert sent to {email} ({alert_type})")
+        else:
+            print(f"❌ Alert email not sent to {email} ({alert_type})")
     except Exception as e:
         print("Email error:", e)
 
