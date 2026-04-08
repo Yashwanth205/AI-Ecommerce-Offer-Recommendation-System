@@ -1,386 +1,457 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
+  <head>
     <title>DealAI - Smart Offer Finder</title>
 
     <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <style>
+      body {
+        background: linear-gradient(135deg, #eef2ff, #e0f2fe, #f8fafc);
+      }
 
-body{
-    background: linear-gradient(135deg,#eef2ff,#e0f2fe,#f8fafc);
-}
+      .hero-title {
+        font-weight: 700;
+        color: #1e293b;
+      }
 
-.hero-title{
-    font-weight:700;
-    color:#1e293b;
-}
+      /* SEARCH BAR */
+      .input-group {
+        background: rgba(255, 255, 255, 0.6);
+        backdrop-filter: blur(12px);
+        border-radius: 50px !important;
+        overflow: hidden;
+        transition: 0.3s;
+      }
 
-/* SEARCH BAR */
-.input-group {
-    background: rgba(255,255,255,0.6);
-    backdrop-filter: blur(12px);
-    border-radius: 50px !important;
-    overflow: hidden;
-    transition: 0.3s;
-}
+      .input-group:hover {
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        transform: scale(1.03);
+      }
 
-.input-group:hover {
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    transform: scale(1.03);
-}
+      select.form-select {
+        background: transparent;
+        font-weight: 500;
+        border-right: 1px solid #ddd;
+      }
 
-select.form-select {
-    background: transparent;
-    font-weight: 500;
-    border-right: 1px solid #ddd;
-}
+      .form-control {
+        background: transparent;
+      }
 
-.form-control {
-    background: transparent;
-}
+      .btn-primary {
+        background: linear-gradient(135deg, #2563eb, #3b82f6);
+        border: none;
+        font-weight: 600;
+      }
 
-.btn-primary {
-    background: linear-gradient(135deg,#2563eb,#3b82f6);
-    border: none;
-    font-weight: 600;
-}
+      .btn-primary:hover {
+        transform: scale(1.08);
+      }
 
-.btn-primary:hover {
-    transform: scale(1.08);
-}
+      /* BEST DEAL */
+      .best-card {
+        background: linear-gradient(135deg, #fff3b0, #ffe082);
+        border-radius: 18px;
+        padding: 28px;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+      }
 
-/* BEST DEAL */
-.best-card{
-    background:linear-gradient(135deg,#fff3b0,#ffe082);
-    border-radius:18px;
-    padding:28px;
-    box-shadow:0 12px 30px rgba(0,0,0,0.2);
-}
+      /* OFFER CARDS */
+      .offer-card {
+        border-radius: 16px;
+        border: none;
+        background: white;
+        transition: 0.3s;
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+      }
 
-/* OFFER CARDS */
-.offer-card{
-    border-radius:16px;
-    border:none;
-    background:white;
-    transition:0.3s;
-    box-shadow:0 8px 18px rgba(0,0,0,0.1);
-}
+      .offer-card:hover {
+        transform: translateY(-10px) scale(1.02);
+        box-shadow: 0 18px 35px rgba(0, 0, 0, 0.2);
+      }
 
-.offer-card:hover{
-    transform:translateY(-10px) scale(1.02);
-    box-shadow:0 18px 35px rgba(0,0,0,0.2);
-}
+      .price {
+        font-size: 22px;
+        font-weight: bold;
+        color: #16a34a;
+      }
 
-.price{
-    font-size:22px;
-    font-weight:bold;
-    color:#16a34a;
-}
+      .old-price {
+        text-decoration: line-through;
+        color: gray;
+      }
 
-.old-price{
-    text-decoration:line-through;
-    color:gray;
-}
+      .store-badge {
+        font-size: 13px;
+      }
 
-.store-badge{
-    font-size:13px;
-}
+      /* CATEGORY */
+      .category-card {
+        border-radius: 15px;
+        transition: 0.3s;
+        font-weight: 600;
+        background: white;
+      }
 
-/* CATEGORY */
-.category-card {
-    border-radius: 15px;
-    transition: 0.3s;
-    font-weight:600;
-    background: white;
-}
+      .category-card:hover {
+        transform: translateY(-8px) scale(1.05);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+      }
 
-.category-card:hover {
-    transform: translateY(-8px) scale(1.05);
-    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
-}
+      /* FEATURES */
+      .feature-card {
+        border-radius: 15px;
+        transition: 0.3s;
+      }
 
-/* FEATURES */
-.feature-card {
-    border-radius: 15px;
-    transition: 0.3s;
-}
+      .feature-card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+      }
 
-.feature-card:hover {
-    transform: scale(1.05);
-    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
-}
+      .nav-link {
+        transition: 0.3s;
+      }
 
-.nav-link {
-    transition: 0.3s;
-}
+      .nav-link:hover {
+        transform: translateY(-2px);
+        opacity: 0.8;
+      }
 
-.nav-link:hover {
-    transform: translateY(-2px);
-    opacity: 0.8;
-}
+      .custom-alert {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+      }
 
-.custom-alert {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.6);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-}
+      .alert-box {
+        background: white;
+        padding: 25px;
+        border-radius: 15px;
+        text-align: center;
+        width: 300px;
+        animation: pop 0.3s ease;
+      }
 
-.alert-box {
-    background: white;
-    padding: 25px;
-    border-radius: 15px;
-    text-align: center;
-    width: 300px;
-    animation: pop 0.3s ease;
-}
+      .alert-box h4 {
+        margin-bottom: 10px;
+      }
 
-.alert-box h4 {
-    margin-bottom: 10px;
-}
+      .alert-box button {
+        margin-top: 15px;
+        padding: 8px 20px;
+        border: none;
+        background: #2563eb;
+        color: white;
+        border-radius: 8px;
+        cursor: pointer;
+      }
 
-.alert-box button {
-    margin-top: 15px;
-    padding: 8px 20px;
-    border: none;
-    background: #2563eb;
-    color: white;
-    border-radius: 8px;
-    cursor: pointer;
-}
-
-@keyframes pop {
-    from { transform: scale(0.7); }
-    to { transform: scale(1); }
-}
-
+      @keyframes pop {
+        from {
+          transform: scale(0.7);
+        }
+        to {
+          transform: scale(1);
+        }
+      }
     </style>
-</head>
+  </head>
 
-<body>
-
-<!-- NAVBAR -->
-<nav class="navbar navbar-expand-lg navbar-dark shadow-sm" style="background:linear-gradient(90deg,#0f172a,#1e293b);">
-    <div class="container">
-
+  <body>
+    <!-- NAVBAR -->
+    <nav
+      class="navbar navbar-expand-lg navbar-dark shadow-sm"
+      style="background: linear-gradient(90deg, #0f172a, #1e293b)"
+    >
+      <div class="container">
         <a class="navbar-brand fw-bold" href="/">🤖 DealAI</a>
 
         <ul class="navbar-nav ms-auto align-items-center">
+          <li class="nav-item mx-2">
+            <a class="nav-link text-white" href="/">Home</a>
+          </li>
 
-            <li class="nav-item mx-2">
-                <a class="nav-link text-white" href="/">Home</a>
-            </li>
-        
-            <li class="nav-item mx-2">
-                <a class="nav-link text-white" href="/watchlist">Watchlist</a>
-            </li>
-        
-            <li class="nav-item mx-2">
-                <a class="nav-link text-warning fw-semibold" href="/account">👤 Account</a>
-            </li>
-        
-            <li class="nav-item mx-2">
-                <a class="nav-link text-danger fw-semibold" href="/logout">Logout</a>
-            </li>
-        
+          <li class="nav-item mx-2">
+            <a class="nav-link text-white" href="/watchlist">Watchlist</a>
+          </li>
+
+          <li class="nav-item mx-2">
+            <a class="nav-link text-warning fw-semibold" href="/account"
+              >👤 Account</a
+            >
+          </li>
+
+          <li class="nav-item mx-2">
+            <a class="nav-link text-danger fw-semibold" href="/logout"
+              >Logout</a
+            >
+          </li>
         </ul>
+      </div>
+    </nav>
 
-    </div>
-</nav>
+    <div class="container mt-5 text-center">
+      <h1 class="hero-title display-5">AI E-Commerce Offer Finder 🤖</h1>
+      <p class="text-muted">
+        Compare prices across multiple stores and find the smartest deal
+        instantly.
+      </p>
 
-<div class="container mt-5 text-center">
-
-    <h1 class="hero-title display-5">AI E-Commerce Offer Finder 🤖</h1>
-    <p class="text-muted">Compare prices across multiple stores and find the smartest deal instantly.</p>
-
-    <!-- SEARCH -->
-    <form method="POST" action="/" class="mt-4">
+      <!-- SEARCH -->
+      <form method="POST" action="/" class="mt-4">
         <div class="input-group w-50 mx-auto shadow rounded-pill">
+          <select
+            name="category"
+            class="form-select border-0"
+            style="max-width: 160px"
+          >
+            <option value="">🧾 All</option>
+            <option value="electronics">📱 Electronics</option>
+            <option value="furniture">🪑 Furniture</option>
+            <option value="fashion">👕 Fashion</option>
+            <option value="books">📚 Books</option>
+          </select>
 
-            <select name="category" class="form-select border-0" style="max-width:160px;">
-                <option value="">🧾 All</option>
-                <option value="electronics">📱 Electronics</option>
-                <option value="furniture">🪑 Furniture</option>
-                <option value="fashion">👕 Fashion</option>
-                <option value="books">📚 Books</option>
-            </select>
+          <input
+            type="text"
+            name="product"
+            class="form-control border-0 px-3"
+            placeholder="🔍 Search product..."
+            required
+          />
 
-            <input type="text" name="product"
-                   class="form-control border-0 px-3"
-                   placeholder="🔍 Search product..."
-                   required>
-
-            <button class="btn btn-primary px-4">🔍 Search</button>
+          <button class="btn btn-primary px-4">🔍 Search</button>
         </div>
-    </form>
+      </form>
 
-    <p class="text-muted mt-2">🔥 Trending: iPhone, Laptop, Sofa</p>
+      <p class="text-muted mt-2">🔥 Trending: iPhone, Laptop, Sofa</p>
 
-    {% if not offers %}
+      {% if not offers %}
 
-    <!-- CATEGORY -->
-    <div class="container mt-5">
+      <!-- CATEGORY -->
+      <div class="container mt-5">
         <h4 class="text-start mb-3">🛍️ Browse Categories</h4>
         <div class="row text-center">
-            <div class="col-md-3"><div class="card p-3 shadow-sm category-card">📱 Electronics</div></div>
-            <div class="col-md-3"><div class="card p-3 shadow-sm category-card">🪑 Furniture</div></div>
-            <div class="col-md-3"><div class="card p-3 shadow-sm category-card">👕 Fashion</div></div>
-            <div class="col-md-3"><div class="card p-3 shadow-sm category-card">📚 Books</div></div>
+          <div class="col-md-3">
+            <div class="card p-3 shadow-sm category-card">📱 Electronics</div>
+          </div>
+          <div class="col-md-3">
+            <div class="card p-3 shadow-sm category-card">🪑 Furniture</div>
+          </div>
+          <div class="col-md-3">
+            <div class="card p-3 shadow-sm category-card">👕 Fashion</div>
+          </div>
+          <div class="col-md-3">
+            <div class="card p-3 shadow-sm category-card">📚 Books</div>
+          </div>
         </div>
-    </div>
+      </div>
 
-    <!-- WHY DEALAI -->
-    <div class="container mt-5">
+      <!-- WHY DEALAI -->
+      <div class="container mt-5">
         <h4 class="text-start mb-3">🤖 Why DealAI?</h4>
         <div class="row text-center">
-            <div class="col-md-4">
-                <div class="card p-4 shadow-sm feature-card">
-                    ⚡ Fast Price Comparison
-                    <p class="text-muted">Compare multiple stores instantly</p>
-                </div>
+          <div class="col-md-4">
+            <div class="card p-4 shadow-sm feature-card">
+              ⚡ Fast Price Comparison
+              <p class="text-muted">Compare multiple stores instantly</p>
             </div>
-            <div class="col-md-4">
-                <div class="card p-4 shadow-sm feature-card">
-                    🧠 AI Recommendation
-                    <p class="text-muted">Smart suggestions based on value</p>
-                </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card p-4 shadow-sm feature-card">
+              🧠 AI Recommendation
+              <p class="text-muted">Smart suggestions based on value</p>
             </div>
-            <div class="col-md-4">
-                <div class="card p-4 shadow-sm feature-card">
-                    🔔 Deal Alerts
-                    <p class="text-muted">Get notified on price drops</p>
-                </div>
+          </div>
+          <div class="col-md-4">
+            <div class="card p-4 shadow-sm feature-card">
+              🔔 Deal Alerts
+              <p class="text-muted">Get notified on price drops</p>
             </div>
+          </div>
         </div>
-    </div>
+      </div>
 
-    {% endif %}
-
-    {% if offers is not none %}
-
-    {% if best %}
-    <div class="best-card mt-5">
+      {% endif %} {% if offers is not none %} {% if best %}
+      <div class="best-card mt-5">
         <h2 class="fw-bold text-dark">🏆 Best Deal Recommended</h2>
-        <h3 class="mt-3">{{ best.name if best.name and best.name != "Unknown Product" else request.form.get('product') }}</h3>
+        <h3 class="mt-3">
+          {{ best.name if best.name and best.name != "Unknown Product" else
+          request.form.get('product') }}
+        </h3>
 
         <p class="old-price">₹ {{ best.price or 0 }}</p>
         <p class="price">You Pay: ₹ {{ best.final_price or 0 }}</p>
 
         <p><b>Discount:</b> {{ best.discount or 0 }}%</p>
-        <p><b>Rating:</b> ⭐ {{ best.rating if best.rating and best.rating > 0 else "N/A" }}</p>
-        <span class="badge bg-success store-badge">{{ best.store or "Store" }}</span>
-    </div>
-    {% endif %}
-
-    {% if explanation %}
-    <div class="alert alert-info mt-4 text-start shadow-sm">
+        <p>
+          <b>Rating:</b> ⭐ {{ best.rating if best.rating and best.rating > 0
+          else "N/A" }}
+        </p>
+        <span class="badge bg-success store-badge"
+          >{{ best.store or "Store" }}</span
+        >
+      </div>
+      {% endif %} {% if explanation %}
+      <div class="alert alert-info mt-4 text-start shadow-sm">
         <b>🤖 AI Explanation:</b>
         <p class="mb-0">{{ explanation }}</p>
-    </div>
-    {% endif %}
+      </div>
+      {% endif %}
 
-    <div class="row mt-4">
-        {% for item in offers %}
-        {% if item.rank != 1 %}
+      <div class="row mt-4">
+        {% for item in offers %} {% if item.rank != 1 %}
         <div class="col-md-4 mb-4">
-            <div class="card offer-card p-3">
+          <div class="card offer-card p-3">
+            <h5>#{{ item.rank }} - {{ item.name or "Product" }}</h5>
 
-                <h5>#{{ item.rank }} - {{ item.name or "Product" }}</h5>
+            <p class="old-price">₹ {{ item.price or 0 }}</p>
+            <p class="price">
+              ₹ {{ item.final_price if item.final_price else (item.price -
+              (item.price * item.discount / 100) - (item.offer or 0)) }}
+            </p>
 
-                <p class="old-price">₹ {{ item.price or 0 }}</p>
-                <p class="price">₹ {{ item.final_price if item.final_price else (item.price - (item.price * item.discount / 100) - (item.offer or 0)) }}</p>
+            <p class="text-warning">Discount: {{ item.discount or 0 }}%</p>
+            <p>
+              ⭐ {{ item.rating if item.rating and item.rating > 0 else "N/A" }}
+            </p>
 
-                <p class="text-warning">Discount: {{ item.discount or 0 }}%</p>
-                <p>⭐ {{ item.rating if item.rating and item.rating > 0 else "N/A" }}</p>
-
-                <span class="badge bg-secondary">{{ item.store or "Store" }}</span>
-
-            </div>
+            <span class="badge bg-secondary">{{ item.store or "Store" }}</span>
+          </div>
         </div>
-        {% endif %}
-        {% endfor %}
+        {% endif %} {% endfor %}
+      </div>
+
+      {% endif %}
     </div>
+    <script>
+      function buildAlertCard(alertData) {
+        const type = alertData.type || "update";
+        const product = (alertData.product || "product").toString();
+        const oldPrice = alertData.old_price ?? "-";
+        const newPrice = alertData.new_price ?? "-";
 
-    {% endif %}
+        let accent = "#2563eb";
+        let title = `Update for ${product}`;
+        let description = "A change has been detected in your watchlist.";
 
-</div>
-<script>
-function showToast(msg) {
-    const toast = document.getElementById("customToast");
-    const message = document.getElementById("toastMessage");
-
-    message.innerText = msg;
-    toast.style.display = "block";
-
-    setTimeout(() => {
-        toast.style.display = "none";
-    }, 4000);
-}
-    async function checkAlerts() {
-        try {
-            let res = await fetch("/alerts");
-            let data = await res.json();
-    
-            console.log("ALERT DATA:", data); // 🔍 debug
-    
-            if (data.alerts && data.alerts.length > 0) {
-
-let alertData = data.alerts[0];
-if (!alertData) return;
-
-let message = "";
-
-if (alertData.type === "drop") {
-    message = `🔻 Price dropped for ${alertData.product}!\n₹${alertData.old_price} → ₹${alertData.new_price}`;
-} else if (alertData.type === "increase") {
-    message = `🔺 Price increased for ${alertData.product}`;
-} else {
-    message = `🔄 Store changed for ${alertData.product}`;
-}
-
-showToast(message);
-
-await fetch("/clear-alerts", { method: "POST" });
-
-setTimeout(() => {
-    window.location.href = "/?product=" + alertData.product;
-}, 4000);
-}
-    
-        } catch (e) {
-            console.log("Alert fetch error", e);
+        if (type === "drop") {
+          accent = "#16a34a";
+          title = `Price Dropped: ${product}`;
+          description = `Great news: Rs ${oldPrice} -> Rs ${newPrice}`;
+        } else if (type === "increase") {
+          accent = "#dc2626";
+          title = `Price Increased: ${product}`;
+          description = `Price changed from Rs ${oldPrice} to Rs ${newPrice}`;
+        } else if (type === "store_change") {
+          accent = "#7c3aed";
+          title = `Best Store Changed: ${product}`;
+          description = `DealAI found a better store/offer combination.`;
         }
-    }
-    
-    // check every 5 sec
-    setInterval(checkAlerts, 5000);
-    </script>
-<div id="customToast" 
-style="
-   position: fixed;
-   top: 20px;
-   right: 20px;
-   min-width: 280px;
-   background: #111827;
-   color: white;
-   padding: 15px 20px;
-   border-radius: 12px;
-   box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-   display: none;
-   z-index: 9999;
-   font-weight: 500;
-">
-<span id="toastMessage"></span>
-</div>
 
-</body>
+        const card = document.createElement("div");
+        card.className = "deal-alert-card";
+        card.style.borderLeft = `6px solid ${accent}`;
+        card.innerHTML = `
+        <div class="deal-alert-title">${title}</div>
+        <div class="deal-alert-desc">${description}</div>
+        <div class="deal-alert-actions">
+            <a class="btn btn-sm btn-light" href="/?product=${encodeURIComponent(product)}">View Deal</a>
+            <button class="btn btn-sm btn-outline-light" onclick="this.closest('.deal-alert-card').remove()">Dismiss</button>
+        </div>
+    `;
+        return card;
+      }
+
+      function showAlerts(alerts) {
+        const stack = document.getElementById("alertStack");
+        stack.innerHTML = "";
+        alerts.slice(0, 4).forEach((a) => stack.appendChild(buildAlertCard(a)));
+        stack.style.display = "flex";
+      }
+
+      async function checkAlerts() {
+        try {
+          const res = await fetch("/alerts");
+          const data = await res.json();
+
+          if (data.alerts && data.alerts.length > 0) {
+            showAlerts(data.alerts);
+            await fetch("/clear-alerts", { method: "POST" });
+          }
+        } catch (e) {
+          console.log("Alert fetch error", e);
+        }
+      }
+
+      checkAlerts();
+      setInterval(checkAlerts, 8000);
+    </script>
+
+    <div
+      id="alertStack"
+      style="
+        position: fixed;
+        top: 18px;
+        right: 18px;
+        display: none;
+        flex-direction: column;
+        gap: 10px;
+        z-index: 9999;
+        max-width: 380px;
+      "
+    ></div>
+    <style>
+      .deal-alert-card {
+        background: linear-gradient(135deg, #111827, #1f2937);
+        color: #fff;
+        border-radius: 14px;
+        padding: 12px 14px;
+        box-shadow: 0 14px 28px rgba(0, 0, 0, 0.28);
+        animation: slideIn 0.25s ease;
+      }
+
+      .deal-alert-title {
+        font-size: 14px;
+        font-weight: 700;
+        margin-bottom: 3px;
+      }
+
+      .deal-alert-desc {
+        font-size: 13px;
+        opacity: 0.95;
+        margin-bottom: 8px;
+      }
+
+      .deal-alert-actions {
+        display: flex;
+        gap: 8px;
+      }
+
+      @keyframes slideIn {
+        from {
+          transform: translateX(18px);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+    </style>
+  </body>
 </html>

@@ -2,14 +2,14 @@ from flask import Flask, render_template, request, jsonify, session, redirect, u
 try:
     from .scorer import rank_offers
     from .memory import add_to_watchlist, update_price
-    from .price_agent import run_agent
+    from .price_agent import run_agent, check_prices
     from .nlp_processor import process_query
     from .fetcher import fetch_all_offers
     from .ai_explainer import generate_explanation
 except ImportError:
     from scorer import rank_offers
     from memory import add_to_watchlist, update_price
-    from price_agent import run_agent
+    from price_agent import run_agent, check_prices
     from nlp_processor import process_query
     from fetcher import fetch_all_offers
     from ai_explainer import generate_explanation
@@ -25,6 +25,7 @@ supabase = create_client(url, key)
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "dealai_super_secret_123")
+agent_thread_started = False
 
 
 @app.context_processor
@@ -154,8 +155,8 @@ def remove(product_name):
 @app.route("/run-agent", methods=["GET", "POST"])
 def run_agent_route():
     try:
-        run_agent()
-        return jsonify({"status": "agent ran successfully"})
+        check_prices()
+        return jsonify({"status": "agent check completed"})
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 500
 
@@ -228,7 +229,23 @@ def start_agent():
         run_agent()
 
 
-if __name__ == "__main__":
+def ensure_agent_thread_started():
+    global agent_thread_started
+    if agent_thread_started:
+        return
+
+    if os.environ.get("ENABLE_PRICE_AGENT", "true").lower() != "true":
+        print("Price agent disabled by ENABLE_PRICE_AGENT")
+        return
+
     agent_thread = threading.Thread(target=start_agent, daemon=True)
     agent_thread.start()
+    agent_thread_started = True
+    print("Price agent background thread started")
+
+
+ensure_agent_thread_started()
+
+
+if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)

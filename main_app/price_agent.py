@@ -12,6 +12,7 @@ from supabase import create_client
 import os
 
 supabase = create_client(os.environ.get("SUPABASE_URL"), os.environ.get("SUPABASE_KEY"))
+PRICE_CHECK_INTERVAL_SECONDS = max(15, int(os.environ.get("PRICE_CHECK_INTERVAL_SECONDS", "60")))
 
 
 def get_user_email(user_id):
@@ -112,9 +113,17 @@ def check_prices():
         print("❌ check_prices error:", e)
 
 
-schedule.every(10).minutes.do(check_prices)
+schedule.every(PRICE_CHECK_INTERVAL_SECONDS).seconds.do(check_prices)
 
 
 def run_agent():
     print("🧠 Agent started...")
     check_prices()  # run once immediately
+
+    while True:
+        try:
+            schedule.run_pending()
+            time.sleep(1)
+        except Exception as e:
+            print("Agent loop error:", e)
+            time.sleep(5)
