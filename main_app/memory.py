@@ -2,6 +2,11 @@ from flask import session
 from supabase import create_client
 import os
 
+try:
+    from .emailer import send_price_alert
+except ImportError:
+    from emailer import send_price_alert
+
 url = os.environ.get("SUPABASE_URL")
 key = os.environ.get("SUPABASE_KEY")
 supabase = create_client(url, key)
@@ -48,6 +53,8 @@ def update_price(product_name, price, store, offer_id):
 
     old_price = existing.data[0].get("last_best_price", 0)
 
+    user_email = session.get("username")
+
     # ✅ INSERT ALERT if price changed
     if old_price and price < old_price:
         supabase.table("alerts").insert({
@@ -59,6 +66,13 @@ def update_price(product_name, price, store, offer_id):
         }).execute()
         print(f"🔥 PRICE DROP ALERT inserted for {product_name}")
 
+        if user_email:
+            try:
+                send_price_alert(user_email, product_name, store, old_price, price)
+                print(f"📧 Price drop email sent to {user_email}")
+            except Exception as e:
+                print(f"❌ Price drop email failed for {user_email}:", e)
+
     elif old_price and price > old_price:
         supabase.table("alerts").insert({
             "user_id": user_id,
@@ -67,6 +81,13 @@ def update_price(product_name, price, store, offer_id):
             "new_price": price,
             "type": "increase"
         }).execute()
+
+        if user_email:
+            try:
+                send_price_alert(user_email, product_name, store, old_price, price)
+                print(f"📧 Price increase email sent to {user_email}")
+            except Exception as e:
+                print(f"❌ Price increase email failed for {user_email}:", e)
 
     supabase.table("watchlist").update({
         "last_best_price": price,
