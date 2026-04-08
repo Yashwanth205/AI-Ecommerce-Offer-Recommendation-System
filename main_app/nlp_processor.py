@@ -1,24 +1,23 @@
 import nltk
+import os
+
+# ✅ Download NLTK data on Render
+nltk_data_dir = "/tmp/nltk_data"
+os.makedirs(nltk_data_dir, exist_ok=True)
+nltk.data.path.append(nltk_data_dir)
+nltk.download("punkt", download_dir=nltk_data_dir, quiet=True)
+nltk.download("punkt_tab", download_dir=nltk_data_dir, quiet=True)
+nltk.download("stopwords", download_dir=nltk_data_dir, quiet=True)
+
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 
-# load English stopwords
-stop_words = set(stopwords.words('english'))
+stop_words = set(stopwords.words("english"))
+
 
 def process_query(user_input):
-    # 1. make lowercase
     user_input = user_input.lower()
-
-    # 2. split sentence into words
     words = word_tokenize(user_input)
-
-    # 3. remove useless words (the, is, for, under...)
-    filtered_words = []
-    for word in words:
-        if word.isalnum() and word not in stop_words:
-            filtered_words.append(word)
-
-    # 4. join important words
+    filtered_words = [w for w in words if w.isalnum() and w not in stop_words]
     cleaned_query = " ".join(filtered_words)
-
-    return cleaned_query
+    return cleaned_query if cleaned_query else user_input
