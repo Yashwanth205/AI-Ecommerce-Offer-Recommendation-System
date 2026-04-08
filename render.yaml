@@ -1,0 +1,48 @@
+services:
+  - type: web
+    name: ecommerce-site-1
+    env: python
+    rootDir: ecommerce_site1
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn run:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_KEY
+        sync: false
+
+  - type: web
+    name: ecommerce-site-2
+    env: python
+    rootDir: ecommerce_site2
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn run:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_KEY
+        sync: false
+
+  - type: web
+    name: ai-offer-main-app
+    env: python
+    rootDir: .
+    buildCommand: pip install -r main_app/requirements.txt
+    startCommand: gunicorn main_app.app:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_KEY
+        sync: false
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ECOMMERCE_SITE1_API_URL
+        value: https://ecommerce1-8ycx.onrender.com/api/search
+      - key: ECOMMERCE_SITE2_API_URL
+        value: https://ecommerce-v0n8.onrender.com/api/search

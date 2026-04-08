@@ -1,5 +1,6 @@
 import requests
 import uuid
+import os
 
 
 # -------------------------------
@@ -61,8 +62,14 @@ def fetch_all_offers(product_name):
     product_name = product_name.lower().strip()
     offers = []
 
-    SITE1_URL = "https://ecommerce1-8ycx.onrender.com/api/search"
-    SITE2_URL = "https://ecommerce-v0n8.onrender.com/api/search"
+    SITE1_URL = os.environ.get(
+        "ECOMMERCE_SITE1_API_URL",
+        "https://ecommerce1-8ycx.onrender.com/api/search"
+    )
+    SITE2_URL = os.environ.get(
+        "ECOMMERCE_SITE2_API_URL",
+        "https://ecommerce-v0n8.onrender.com/api/search"
+    )
 
     # ----------- Ecommerce Site 1 -----------
     try:
